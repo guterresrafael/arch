@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Response;
 import rs.pelotas.arch.entity.BaseEntity;
-import rs.pelotas.arch.utils.Reflection;
+import rs.pelotas.arch.helper.Reflection;
 
 /**
  *
@@ -22,7 +22,8 @@ import rs.pelotas.arch.utils.Reflection;
 public abstract class BaseResourceImpl<EntityType extends BaseEntity, IdType extends Serializable>
            implements BaseResource<EntityType, IdType> {
 
-    private static final Integer LIMIT_DEFAULT_VALUE = 20;
+    private static final Integer PARAM_OFFSET_DEFAULT_VALUE = 0;
+    private static final Integer PARAM_LIMIT_DEFAULT_VALUE = 20;
     
     @Inject
     ResponseBuilder responseBuilder;
@@ -33,8 +34,13 @@ public abstract class BaseResourceImpl<EntityType extends BaseEntity, IdType ext
     }
 
     @Override
+    public Integer getOffsetDefaultValue() {
+        return PARAM_OFFSET_DEFAULT_VALUE;
+    }
+
+    @Override
     public Integer getLimitDefaultValue() {
-        return LIMIT_DEFAULT_VALUE;
+        return PARAM_LIMIT_DEFAULT_VALUE;
     }
 
     @Override
@@ -53,7 +59,7 @@ public abstract class BaseResourceImpl<EntityType extends BaseEntity, IdType ext
             QueryParams queryParams = new QueryParams(request);
             
             //Pagination
-            Integer offset = queryParams.getOffset();
+            Integer offset = (queryParams.getOffset() != null) ? queryParams.getOffset() : getOffsetDefaultValue();
             Integer limit = (queryParams.getLimit() != null) ? queryParams.getLimit() : getLimitDefaultValue();
             
             //Filters

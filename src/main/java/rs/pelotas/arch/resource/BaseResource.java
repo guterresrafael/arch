@@ -31,6 +31,8 @@ public interface BaseResource<EntityType extends BaseEntity, IdType extends Seri
     
     ResponseBuilder getResponseBuilder();
 
+    Integer getOffsetDefaultValue();
+    
     Integer getLimitDefaultValue();
     
     @PermitAll

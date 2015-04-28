@@ -1,4 +1,4 @@
-package rs.pelotas.arch.utils;
+package rs.pelotas.arch.helper;
 
 import java.io.IOException;
 import java.io.InputStream;

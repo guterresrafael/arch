@@ -8,10 +8,10 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
-import rs.pelotas.arch.annotation.CriteriaFilterImpl;
+import rs.pelotas.arch.helper.Criteria;
 import rs.pelotas.arch.entity.BaseEntity;
 import rs.pelotas.arch.filter.BaseFilter;
-import rs.pelotas.arch.utils.Reflection;
+import rs.pelotas.arch.helper.Reflection;
 
 /**
  *
@@ -73,7 +73,7 @@ public abstract class BaseRepositoryImpl<EntityType extends BaseEntity, IdType e
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(root);
         if (filter != null) {
-            CriteriaFilterImpl.applyCriteriaFilterAnnotations(criteriaBuilder, criteriaQuery, root, filter);
+            Criteria.applyFilterAnnotations(criteriaBuilder, criteriaQuery, root, filter);
         }
         TypedQuery<EntityType> typedQuery = getEntityManager().createQuery(criteriaQuery);
         List<EntityType> entities = typedQuery.getResultList();
@@ -119,7 +119,7 @@ public abstract class BaseRepositoryImpl<EntityType extends BaseEntity, IdType e
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(root);
         if (filter != null) {
-            CriteriaFilterImpl.applyCriteriaFilterAnnotations(criteriaBuilder, criteriaQuery, root, filter);
+            Criteria.applyFilterAnnotations(criteriaBuilder, criteriaQuery, root, filter);
         }
         TypedQuery typedQuery = getEntityManager().createQuery(criteriaQuery);
         List<EntityType> entities = typedQuery
@@ -141,13 +141,7 @@ public abstract class BaseRepositoryImpl<EntityType extends BaseEntity, IdType e
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(root);
         if (mapList != null && !mapList.isEmpty()) {
-            for (Map<String, String> filter : mapList) {
-                for (Map.Entry<String, String> entry : filter.entrySet()) {
-                    String key = entry.getKey();
-                    String value = entry.getValue();
-                    criteriaQuery.where(criteriaBuilder.equal(root.get(key), value));
-                }
-            }
+            Criteria.applyMapList(criteriaBuilder, criteriaQuery, root, mapList);
         }
         TypedQuery typedQuery = getEntityManager().createQuery(criteriaQuery);
         List<EntityType> entities = typedQuery

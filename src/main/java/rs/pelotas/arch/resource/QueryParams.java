@@ -7,29 +7,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
+import rs.pelotas.arch.enumeration.OrderBy;
+import rs.pelotas.arch.enumeration.Param;
 
 /**
  *
  * @author Rafael Guterres
  */
 public class QueryParams {
-    
-    public enum KeyParams {
-        SORT,
-        FIELDS,
-        OFFSET,
-        LIMIT
-    }
-    
-    public enum OrderBy {
-        ASC,
-        DESC
-    }
-    
+        
     private static final String PARAM_DELIMITER_VALUES = ",";
     private static final String PARAM_ORDERBY_ASC = "+";
     private static final String PARAM_ORDERBY_DESC = "-";
-    private static final Integer PARAM_OFFSET_DEFAULT_VALUE = 0;
     
     private Integer offset;
     private Integer limit;
@@ -41,10 +30,10 @@ public class QueryParams {
     }
 
     public QueryParams(HttpServletRequest request) {
-        setOffset(request.getParameter(KeyParams.OFFSET.name().toLowerCase()));
-        setLimit(request.getParameter(KeyParams.LIMIT.name().toLowerCase()));
-        setSortList(request.getParameter(KeyParams.SORT.name().toLowerCase()));
-        setFieldList(request.getParameter(KeyParams.FIELDS.name().toLowerCase()));
+        setOffset(request.getParameter(Param.OFFSET.name().toLowerCase()));
+        setLimit(request.getParameter(Param.LIMIT.name().toLowerCase()));
+        setSortList(request.getParameter(Param.SORT.name().toLowerCase()));
+        setFieldList(request.getParameter(Param.FIELDS.name().toLowerCase()));
         setFilterList(request);
     }
 
@@ -56,7 +45,7 @@ public class QueryParams {
         try {
             this.offset = Integer.parseInt(offset);
         } catch (NumberFormatException e) {
-            this.offset = PARAM_OFFSET_DEFAULT_VALUE;
+            this.offset = null;
         }
     }
     
@@ -125,7 +114,7 @@ public class QueryParams {
         while (params.hasMoreElements()) {
             String paramName = params.nextElement();
             try {
-                KeyParams.valueOf(paramName.toUpperCase());
+                Param.valueOf(paramName.toUpperCase());
             } catch (IllegalArgumentException e) {
                 Map<String, String> filter = new HashMap<>();
                 filter.put(paramName, request.getParameter(paramName));

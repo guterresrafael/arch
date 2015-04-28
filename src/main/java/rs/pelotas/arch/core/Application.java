@@ -23,7 +23,7 @@ public class Application extends javax.ws.rs.core.Application {
     Logger logger;
     
     @PostConstruct
-    public void init() {
+    private void init() {
         logger.info("Application initialization..");
         scheduler.scheduleJobs();
     }

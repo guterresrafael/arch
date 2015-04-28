@@ -1,16 +1,15 @@
-package rs.pelotas.arch.annotation;
+package rs.pelotas.arch.helper;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import rs.pelotas.arch.utils.Reflection;
 
 /**
  *
  * @author Rafael Guterres
  */
-public class AssemblerImpl {
+public class Assembler {
     
     public static void assembler(Object objectFrom, Object objectTo) {
         try {

@@ -1,24 +1,25 @@
-package rs.pelotas.arch.annotation;
+package rs.pelotas.arch.helper;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import rs.pelotas.arch.annotation.CriteriaFilter;
 import rs.pelotas.arch.filter.BaseFilter;
-import rs.pelotas.arch.utils.Reflection;
 
 /**
  *
  * @author Rafael Guterres
  */
-public class CriteriaFilterImpl {
+public class Criteria {
     
-    public static void applyCriteriaFilterAnnotations(CriteriaBuilder criteriaBuilder,
-                                                      CriteriaQuery<?> criteriaQuery,
-                                                      Root<?> root,
-                                                      BaseFilter filter) {
+    public static void applyFilterAnnotations(CriteriaBuilder criteriaBuilder,
+                                              CriteriaQuery<?> criteriaQuery,
+                                              Root<?> root,
+                                              BaseFilter filter) {
         List<Field> fields = new ArrayList<>();
         Reflection.getAllFields(fields, filter.getClass());
         for (Field field : fields) {
@@ -39,6 +40,19 @@ public class CriteriaFilterImpl {
                         //TODO: Implementar consulta
                         break;
                 }
+            }
+        }
+    }
+    
+    public static void applyMapList(CriteriaBuilder criteriaBuilder,
+                                    CriteriaQuery<?> criteriaQuery,
+                                    Root<?> root,
+                                    List<Map<String, String>> mapList) {
+        for (Map<String, String> filter : mapList) {
+            for (Map.Entry<String, String> entry : filter.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                criteriaQuery.where(criteriaBuilder.equal(root.get(key), value));
             }
         }
     }
