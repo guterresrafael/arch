@@ -2,11 +2,10 @@ package rs.pelotas.arch.helper;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
+import rs.pelotas.arch.enumeration.Method;
 import rs.pelotas.arch.enumeration.OrderBy;
 import rs.pelotas.arch.enumeration.Param;
 
@@ -16,15 +15,19 @@ import rs.pelotas.arch.enumeration.Param;
  */
 public class QueryString {
         
-    private static final String PARAM_DELIMITER_VALUES = ",";
-    private static final String PARAM_ORDERBY_ASC = "+";
-    private static final String PARAM_ORDERBY_DESC = "-";
+    private static final String DELIMITER_PARAM_VALUE = ",";
+    private static final String ORDERBY_ASC_OPERATOR = "+";
+    private static final String ORDERBY_DESC_OPERATOR = "-";
+    private static final String GREATER_OPERATOR = ">";
+    private static final String LESS_OPERATOR = "<";
+    private static final String NOT_OPERATOR = "!";
+    private static final String LIKE_OPERATOR = "*";
     
     private Integer offset;
     private Integer limit;
     private List<String> fieldList;
-    private List<Map<String, String>> sortList;
-    private List<Map<String, String>> filterList;
+    private List<Field> sortList;
+    private List<Field> filterList;
 
     public QueryString() {
     }
@@ -32,8 +35,8 @@ public class QueryString {
     public QueryString(HttpServletRequest request) {
         setOffset(request.getParameter(Param.OFFSET.name().toLowerCase()));
         setLimit(request.getParameter(Param.LIMIT.name().toLowerCase()));
-        setSortList(request.getParameter(Param.SORT.name().toLowerCase()));
         setFieldList(request.getParameter(Param.FIELDS.name().toLowerCase()));
+        setSortList(request.getParameter(Param.SORT.name().toLowerCase()));
         setFilterList(request);
     }
 
@@ -61,35 +64,6 @@ public class QueryString {
         }
     }
     
-    public List<Map<String, String>> getSortList() {
-        return sortList;
-    }
-
-    private void setSortList(String sortParams) {
-        this.sortList = new ArrayList<>();
-        if (sortParams != null) {
-            StringTokenizer stringTokenizer = new StringTokenizer(sortParams, PARAM_DELIMITER_VALUES);
-            while(stringTokenizer.hasMoreTokens()) {
-                Map<String, String> sort = new HashMap<>();
-                String fieldParam = stringTokenizer.nextToken();
-                String order;
-                switch (fieldParam.substring(0, 1)) {
-                    case PARAM_ORDERBY_DESC:
-                        order = OrderBy.DESC.name();
-                        fieldParam = fieldParam.substring(1);
-                        break;
-                    case PARAM_ORDERBY_ASC:
-                        fieldParam = fieldParam.substring(1);
-                    default:
-                        order = OrderBy.ASC.name();
-                        break;
-                }
-                sort.put(fieldParam, order);
-                this.sortList.add(sort);
-            }
-        }
-    }
-
     public List<String> getFieldList() {
         return fieldList;
     }
@@ -97,14 +71,44 @@ public class QueryString {
     private void setFieldList(String fieldParams) {
         this.fieldList = new ArrayList<>();
         if (fieldParams != null) {
-            StringTokenizer stringTokenizer = new StringTokenizer(fieldParams, PARAM_DELIMITER_VALUES);
+            StringTokenizer stringTokenizer = new StringTokenizer(fieldParams, DELIMITER_PARAM_VALUE);
             while(stringTokenizer.hasMoreTokens()) {
                 this.fieldList.add(stringTokenizer.nextToken());
             }
         }
     }
 
-    public List<Map<String, String>> getFilterList() {
+    public List<Field> getSortList() {
+        return sortList;
+    }
+
+    private void setSortList(String sortParams) {
+        this.sortList = new ArrayList<>();
+        if (sortParams != null) {
+            StringTokenizer stringTokenizer = new StringTokenizer(sortParams, DELIMITER_PARAM_VALUE);
+            while(stringTokenizer.hasMoreTokens()) {
+                Field field = new Field();
+                String fieldParam = stringTokenizer.nextToken();
+                String order;
+                switch (fieldParam.substring(0, 1)) {
+                    case ORDERBY_DESC_OPERATOR:
+                        order = OrderBy.DESC.name();
+                        fieldParam = fieldParam.substring(1);
+                        break;
+                    case ORDERBY_ASC_OPERATOR:
+                        fieldParam = fieldParam.substring(1);
+                    default:
+                        order = OrderBy.ASC.name();
+                        break;
+                }
+                field.setName(fieldParam);
+                field.setOrderBy(OrderBy.valueOf(order));
+                this.sortList.add(field);
+            }
+        }
+    }    
+    
+    public List<Field> getFilterList() {
         return filterList;
     }
 
@@ -116,10 +120,43 @@ public class QueryString {
             try {
                 Param.valueOf(paramName.toUpperCase());
             } catch (IllegalArgumentException e) {
-                Map<String, String> filter = new HashMap<>();
-                filter.put(paramName, request.getParameter(paramName));
-                this.filterList.add(filter);
+                Field field = new Field();
+                field.setName(paramName);
+                field.setValue(request.getParameter(paramName));
+                this.defineMethodField(field);
+                this.filterList.add(field);
             }
+        }
+    }
+    
+    private void defineMethodField(Field field) {
+        String operatorLeft = field.getName().substring(field.getName().length() -1);
+        switch(operatorLeft) {
+            case GREATER_OPERATOR:
+                field.setMethod(Method.GREATER_OR_EQUAL);
+                break;
+            case LESS_OPERATOR:
+                field.setMethod(Method.LESS_OR_EQUAL);
+                break;
+            case NOT_OPERATOR:
+                field.setMethod(Method.NOT_EQUAL);
+        }
+        if (field.getMethod() != null) {
+            field.setName(field.getName().substring(0, field.getName().length() -1));
+        }
+   
+        String fieldValue = (String) field.getValue();
+        if (fieldValue.contains(LIKE_OPERATOR)) {
+            if (field.getMethod() != null &&
+                field.getMethod().equals(Method.NOT_EQUAL)) {
+                field.setMethod(Method.NOT_LIKE);
+            } else {
+                field.setMethod(Method.LIKE);
+            }
+        }
+        
+        if (field.getMethod() == null) {
+            field.setMethod(Method.EQUAL);    
         }
     }
 }

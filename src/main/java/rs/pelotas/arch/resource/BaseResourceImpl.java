@@ -57,7 +57,7 @@ public abstract class BaseResourceImpl<EntityType extends BaseEntity, IdType ext
             
             //Filters
             if (!queryString.getFilterList().isEmpty()) {
-                entities = getService().findByMapListWithPagination(queryString.getFilterList(), offset, limit);
+                entities = getService().findByFieldListWithPagination(queryString.getFilterList(), offset, limit);
             } else {
                 entities = getService().findAllWithPagination(offset, limit);
             }

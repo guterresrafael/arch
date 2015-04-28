@@ -2,10 +2,10 @@ package rs.pelotas.arch.service;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 import javax.validation.ConstraintViolationException;
 import rs.pelotas.arch.entity.BaseEntity;
 import rs.pelotas.arch.filter.BaseFilter;
+import rs.pelotas.arch.helper.Field;
 import rs.pelotas.arch.repository.BaseRepository;
 
 /**
@@ -42,7 +42,7 @@ public interface BaseService<EntityType extends BaseEntity, IdType extends Seria
     
     Long countByFilterWithPagination(BaseFilter filter, Integer offset, Integer limit);
     
-    List<EntityType> findByMapListWithPagination(List<Map<String, String>> mapList, Integer offset, Integer limit);
+    List<EntityType> findByFieldListWithPagination(List<Field> fieldList, Integer offset, Integer limit);
     
-    Long countByMapListWithPagination(List<Map<String, String>> mapList, Integer offset, Integer limit);
+    Long countByFieldListWithPagination(List<Field> fieldList, Integer offset, Integer limit);
 }

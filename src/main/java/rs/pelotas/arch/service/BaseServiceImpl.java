@@ -3,7 +3,6 @@ package rs.pelotas.arch.service;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
@@ -11,6 +10,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import rs.pelotas.arch.entity.BaseEntity;
 import rs.pelotas.arch.filter.BaseFilter;
+import rs.pelotas.arch.helper.Field;
 
 /**
  *
@@ -86,13 +86,13 @@ public abstract class BaseServiceImpl<EntityType extends BaseEntity, IdType exte
     }
 
     @Override
-    public List<EntityType> findByMapListWithPagination(List<Map<String, String>> mapList, Integer offset, Integer limit) {
-        return getRepository().findByMapListWithPagination(mapList, offset, limit);
+    public List<EntityType> findByFieldListWithPagination(List<Field> fieldList, Integer offset, Integer limit) {
+        return getRepository().findByFieldListWithPagination(fieldList, offset, limit);
     }
 
     @Override
-    public Long countByMapListWithPagination(List<Map<String, String>> mapList, Integer offset, Integer limit) {
-        return getRepository().countByMapListWithPagination(mapList, offset, limit);
+    public Long countByFieldListWithPagination(List<Field> fieldList, Integer offset, Integer limit) {
+        return getRepository().countByFieldListWithPagination(fieldList, offset, limit);
     }
     
     @Override

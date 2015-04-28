@@ -2,7 +2,6 @@ package rs.pelotas.arch.repository;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -11,6 +10,7 @@ import javax.persistence.criteria.Root;
 import rs.pelotas.arch.helper.Criteria;
 import rs.pelotas.arch.entity.BaseEntity;
 import rs.pelotas.arch.filter.BaseFilter;
+import rs.pelotas.arch.helper.Field;
 import rs.pelotas.arch.helper.Reflection;
 
 /**
@@ -120,22 +120,22 @@ public abstract class BaseRepositoryImpl<EntityType extends BaseEntity, IdType e
     }
 
     @Override
-    public List<EntityType> findByMapListWithPagination(List<Map<String, String>> mapList, Integer offset, Integer limit) {
+    public List<EntityType> findByFieldListWithPagination(List<Field> fieldList, Integer offset, Integer limit) {
         CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<EntityType> criteriaQuery = criteriaBuilder.createQuery(entityClass);
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(root);
-        Criteria.applyMapList(criteriaBuilder, criteriaQuery, root, mapList);
+        Criteria.applyFieldList(criteriaBuilder, criteriaQuery, root, fieldList);
         return getResultList(criteriaQuery, offset, limit);
     }
 
     @Override
-    public Long countByMapListWithPagination(List<Map<String, String>> mapList, Integer offset, Integer limit) {
+    public Long countByFieldListWithPagination(List<Field> fieldList, Integer offset, Integer limit) {
         CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(criteriaBuilder.count(root));
-        Criteria.applyMapList(criteriaBuilder, criteriaQuery, root, mapList);
+        Criteria.applyFieldList(criteriaBuilder, criteriaQuery, root, fieldList);
         return getCount(criteriaQuery, offset, limit);
     }
 

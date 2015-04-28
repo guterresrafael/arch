@@ -2,12 +2,12 @@ package rs.pelotas.arch.repository;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 import rs.pelotas.arch.entity.BaseEntity;
 import rs.pelotas.arch.filter.BaseFilter;
+import rs.pelotas.arch.helper.Field;
 
 /**
  *
@@ -44,9 +44,9 @@ public interface BaseRepository<EntityType extends BaseEntity, IdType extends Se
 
     Long countByFilterWithPagination(BaseFilter filter, Integer offset, Integer limit);
 
-    List<EntityType> findByMapListWithPagination(List<Map<String, String>> mapList, Integer offset, Integer limit);
+    List<EntityType> findByFieldListWithPagination(List<Field> fieldList, Integer offset, Integer limit);
 
-    Long countByMapListWithPagination(List<Map<String, String>> mapList, Integer offset, Integer limit);
+    Long countByFieldListWithPagination(List<Field> fieldList, Integer offset, Integer limit);
 
     Path getPath(Root root, String strPath);
 }
