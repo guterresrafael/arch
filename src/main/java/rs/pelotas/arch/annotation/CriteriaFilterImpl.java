@@ -3,13 +3,10 @@ package rs.pelotas.arch.annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import rs.pelotas.arch.filter.BaseFilter;
-import rs.pelotas.arch.repository.TrackerRepositoryImpl;
 import rs.pelotas.arch.utils.Reflection;
 
 /**
@@ -30,7 +27,7 @@ public class CriteriaFilterImpl {
             try {
                 fieldValue = field.get(filter);
             } catch (IllegalArgumentException | IllegalAccessException ex) {
-                Logger.getLogger(TrackerRepositoryImpl.class.getName()).log(Level.SEVERE, null, ex);
+                //TODO: Logger
             }
             if (fieldValue != null && field.isAnnotationPresent(CriteriaFilter.class)) {
                 CriteriaFilter criteriaFilter = field.getAnnotation(CriteriaFilter.class);

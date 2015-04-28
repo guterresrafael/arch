@@ -4,8 +4,7 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-import rs.pelotas.arch.concurrency.TrackerScheduler;
+import rs.pelotas.arch.concurrency.Scheduler;
 
 /**
  *
@@ -15,10 +14,10 @@ import rs.pelotas.arch.concurrency.TrackerScheduler;
  * @author Rafael Guterres
  */
 @ApplicationPath("/api")
-public class TrackerApplication extends Application {
+public class Application extends javax.ws.rs.core.Application {
 
     @Inject
-    TrackerScheduler trackerScheduler;
+    Scheduler scheduler;
     
     @Inject
     Logger logger;
@@ -26,6 +25,6 @@ public class TrackerApplication extends Application {
     @PostConstruct
     public void init() {
         logger.info("Application initialization..");
-        trackerScheduler.scheduleJobs();
+        scheduler.scheduleJobs();
     }
 }

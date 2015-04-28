@@ -5,18 +5,18 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedScheduledExecutorService;
-import rs.pelotas.arch.batch.TrackerJob;
+import rs.pelotas.arch.batch.Job;
 
 /**
  *
  * @author Rafael Guterres
  */
-public class TrackerScheduler {
+public class Scheduler {
 
     @Resource
     ManagedScheduledExecutorService managedScheduledExecutorService;
 
-    List<TrackerJob> jobs = new ArrayList<>();
+    List<Job> jobs = new ArrayList<>();
 
     @PostConstruct
     public void init() {
@@ -25,7 +25,7 @@ public class TrackerScheduler {
     }
 
     public void scheduleJobs() {
-        for (TrackerJob job : jobs) {
+        for (Job job : jobs) {
             managedScheduledExecutorService.scheduleAtFixedRate(
                     job.getRunnableTask(),
                     job.getInitialDelay(),

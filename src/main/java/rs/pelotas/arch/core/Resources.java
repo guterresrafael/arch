@@ -19,7 +19,7 @@ import javax.persistence.PersistenceContext;
  * private EntityManager em;
  * </pre>
  */
-public class TrackerResources {
+public class Resources {
 
 //    @Produces
 //    @PersistenceContext(unitName = "tracker")

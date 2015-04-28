@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Rafael Guterres
  */
-public interface TrackerJob extends Serializable {
+public interface Job extends Serializable {
     
     String getJobName();
     
