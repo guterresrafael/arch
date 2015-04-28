@@ -1,12 +1,13 @@
 package rs.pelotas.arch.resource;
 
+import rs.pelotas.arch.helper.QueryString;
+import rs.pelotas.arch.helper.ResponseBuilder;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Response;
@@ -25,14 +26,6 @@ public abstract class BaseResourceImpl<EntityType extends BaseEntity, IdType ext
     private static final Integer PARAM_OFFSET_DEFAULT_VALUE = 0;
     private static final Integer PARAM_LIMIT_DEFAULT_VALUE = 20;
     
-    @Inject
-    ResponseBuilder responseBuilder;
-
-    @Override
-    public ResponseBuilder getResponseBuilder() {
-        return responseBuilder;
-    }
-
     @Override
     public Integer getOffsetDefaultValue() {
         return PARAM_OFFSET_DEFAULT_VALUE;
@@ -47,30 +40,30 @@ public abstract class BaseResourceImpl<EntityType extends BaseEntity, IdType ext
     public Response getEntityById(IdType id) {
         EntityType entity = getService().load(id);
         if (entity == null) {
-            return getResponseBuilder().notFound();
+            return ResponseBuilder.notFound();
         }
-        return getResponseBuilder().ok(entity);
+        return ResponseBuilder.ok(entity);
     }
 
     @Override
     public Response getEntities(HttpServletRequest request) {
         try {
             List entities;
-            QueryParams queryParams = new QueryParams(request);
+            QueryString queryString = new QueryString(request);
             
             //Pagination
-            Integer offset = (queryParams.getOffset() != null) ? queryParams.getOffset() : getOffsetDefaultValue();
-            Integer limit = (queryParams.getLimit() != null) ? queryParams.getLimit() : getLimitDefaultValue();
+            Integer offset = (queryString.getOffset() != null) ? queryString.getOffset() : getOffsetDefaultValue();
+            Integer limit = (queryString.getLimit() != null) ? queryString.getLimit() : getLimitDefaultValue();
             
             //Filters
-            if (!queryParams.getFilterList().isEmpty()) {
-                entities = getService().findByMapListWithPagination(queryParams.getFilterList(), offset, limit);
+            if (!queryString.getFilterList().isEmpty()) {
+                entities = getService().findByMapListWithPagination(queryString.getFilterList(), offset, limit);
             } else {
                 entities = getService().findAllWithPagination(offset, limit);
             }
             
             //OrderBY
-            if (queryParams.getSortList().isEmpty()) {
+            if (queryString.getSortList().isEmpty()) {
                 //entities = getService().findAllWithPagination(offset, limit);
             } else {
                 //TODO: implementar suporte orderBy
@@ -79,18 +72,18 @@ public abstract class BaseResourceImpl<EntityType extends BaseEntity, IdType ext
             
             //NotFound
             if (entities.isEmpty()) {
-                return getResponseBuilder().notFound();
+                return ResponseBuilder.notFound();
             }
             
             //Custom Fields
-            if (!queryParams.getFieldList().isEmpty()) {
-                entities = createEntitiesMapListByQueryParams(entities, queryParams);
-                return getResponseBuilder().ok(entities);
+            if (!queryString.getFieldList().isEmpty()) {
+                entities = createEntitiesMapListByQueryParams(entities, queryString);
+                return ResponseBuilder.ok(entities);
             } else {
-                return getResponseBuilder().ok(entities);
+                return ResponseBuilder.ok(entities);
             }
         } catch (Exception e) {
-            return getResponseBuilder().badRequest(e);
+            return ResponseBuilder.badRequest(e);
         }
     }
 
@@ -99,11 +92,11 @@ public abstract class BaseResourceImpl<EntityType extends BaseEntity, IdType ext
         try {
             getService().validate(entity);
             entity = getService().save(entity);
-            return getResponseBuilder().ok(entity);
+            return ResponseBuilder.ok(entity);
         } catch (ConstraintViolationException cve) {
-            return getResponseBuilder().badRequest(cve);
+            return ResponseBuilder.badRequest(cve);
         } catch (Exception e) {
-            return getResponseBuilder().badRequest(e);
+            return ResponseBuilder.badRequest(e);
         }
     }
 
@@ -112,11 +105,11 @@ public abstract class BaseResourceImpl<EntityType extends BaseEntity, IdType ext
         try {
             getService().validate(entity);
             entity = getService().save(entity);
-            return getResponseBuilder().ok(entity);
+            return ResponseBuilder.ok(entity);
         } catch (ConstraintViolationException cve) {
-            return getResponseBuilder().badRequest(cve);
+            return ResponseBuilder.badRequest(cve);
         } catch (Exception e) {
-            return getResponseBuilder().conflict(e);
+            return ResponseBuilder.conflict(e);
         }
     }
 
@@ -125,18 +118,18 @@ public abstract class BaseResourceImpl<EntityType extends BaseEntity, IdType ext
         try {
             getService().delete(id);
         } catch (Exception e) {
-            return getResponseBuilder().conflict(e);
+            return ResponseBuilder.conflict(e);
         }
-        return getResponseBuilder().deleted();
+        return ResponseBuilder.deleted();
     }
-    
-    private List<Map<String, Object>> createEntitiesMapListByQueryParams(List<EntityType> entities, QueryParams queryParams) throws IllegalArgumentException, IllegalAccessException {
+
+    private List<Map<String, Object>> createEntitiesMapListByQueryParams(List<EntityType> entities, QueryString queryString) throws IllegalArgumentException, IllegalAccessException {
         List<Map<String, Object>> entitiesMap = new ArrayList<>();
         for (EntityType entity : entities) {
             Map<String, Object> entityMap = new HashMap<>();
             List<Field> entityFields = new ArrayList<>();
             Reflection.getAllFields(entityFields, entity.getClass());
-            for (String fieldParam : queryParams.getFieldList()) {
+            for (String fieldParam : queryString.getFieldList()) {
                 for (Field entityField : entityFields) {
                     entityField.setAccessible(true);
                     if (entityField.getName().equals(fieldParam)) {

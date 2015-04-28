@@ -1,4 +1,4 @@
-package rs.pelotas.arch.resource;
+package rs.pelotas.arch.helper;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -14,7 +14,7 @@ import rs.pelotas.arch.enumeration.Param;
  *
  * @author Rafael Guterres
  */
-public class QueryParams {
+public class QueryString {
         
     private static final String PARAM_DELIMITER_VALUES = ",";
     private static final String PARAM_ORDERBY_ASC = "+";
@@ -26,10 +26,10 @@ public class QueryParams {
     private List<Map<String, String>> sortList;
     private List<Map<String, String>> filterList;
 
-    public QueryParams() {
+    public QueryString() {
     }
 
-    public QueryParams(HttpServletRequest request) {
+    public QueryString(HttpServletRequest request) {
         setOffset(request.getParameter(Param.OFFSET.name().toLowerCase()));
         setLimit(request.getParameter(Param.LIMIT.name().toLowerCase()));
         setSortList(request.getParameter(Param.SORT.name().toLowerCase()));

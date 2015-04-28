@@ -1,4 +1,4 @@
-package rs.pelotas.arch.resource;
+package rs.pelotas.arch.helper;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,54 +14,54 @@ import javax.ws.rs.core.Response;
  */
 public class ResponseBuilder {
     
-    public Response ok() {
+    public static Response ok() {
         return Response.status(Response.Status.OK).build();
     }
     
-    public Response ok(Object entity) {
+    public static Response ok(Object entity) {
         return Response.status(Response.Status.OK).entity(entity).build();
     }
 
-    public Response ok(List<Object> entities) {
+    public static Response ok(List<Object> entities) {
         return Response.status(Response.Status.OK).entity(entities).build();
     }
     
-    public Response created() {
+    public static Response created() {
         return Response.status(Response.Status.CREATED).build();
     }
     
-    public Response created(Object entity) {
+    public static Response created(Object entity) {
         return Response.status(Response.Status.CREATED).entity(entity).build();
     }
 
-    public Response accepted() {
+    public static Response accepted() {
         return Response.status(Response.Status.ACCEPTED).build();
     }
 
-    public Response accepted(Object entity) {
+    public static Response accepted(Object entity) {
         return Response.status(Response.Status.ACCEPTED).entity(entity).build();
     }
     
-    public Response deleted() {
+    public static Response deleted() {
         return Response.status(Response.Status.NO_CONTENT).build();
     }
     
-    public Response notModified() {
+    public static Response notModified() {
         return Response.status(Response.Status.NOT_MODIFIED).build();
     }
     
-    public Response badRequest() {
+    public static Response badRequest() {
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
     
-    public Response badRequest(Exception exception) {
+    public static Response badRequest(Exception exception) {
         String message = exception.getMessage();
         Map<String, String> responseObj = new HashMap<>();
         responseObj.put("error", message);
         return Response.status(Response.Status.BAD_REQUEST).entity(responseObj).build();
     }
 
-    public Response badRequest(ConstraintViolationException constraintViolationException) {
+    public static Response badRequest(ConstraintViolationException constraintViolationException) {
         Set<ConstraintViolation<?>> violations = constraintViolationException.getConstraintViolations();
         Map<String, String> responseObj = new HashMap<>();
         for (ConstraintViolation<?> violation : violations) {
@@ -70,34 +70,34 @@ public class ResponseBuilder {
         return Response.status(Response.Status.BAD_REQUEST).entity(responseObj).build();
     }
     
-    public Response unauthorized() {
+    public static Response unauthorized() {
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
     
-    public Response forbidden() {
+    public static Response forbidden() {
         return Response.status(Response.Status.FORBIDDEN).build();
     }
     
-    public Response notFound() {
+    public static Response notFound() {
         return Response.status(Response.Status.NOT_FOUND).build();
     }
 
-    public Response timeout() {
+    public static Response timeout() {
         return Response.status(Response.Status.REQUEST_TIMEOUT).build();
     }
     
-    public Response conflict() {
+    public static Response conflict() {
         return Response.status(Response.Status.CONFLICT).build();
     }
     
-    public Response conflict(Exception exception) {
+    public static Response conflict(Exception exception) {
         String message = exception.getMessage();
         Map<String, String> responseObj = new HashMap<>();
         responseObj.put("error", message);
         return Response.status(Response.Status.CONFLICT).entity(responseObj).build();
     }
     
-    public Response notImplemented() {
+    public static Response notImplemented() {
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
 }

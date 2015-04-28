@@ -51,9 +51,7 @@ public abstract class BaseRepositoryImpl<EntityType extends BaseEntity, IdType e
         CriteriaQuery<EntityType> criteriaQuery = criteriaBuilder.createQuery(entityClass);
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(root);
-        TypedQuery typedQuery = getEntityManager().createQuery(criteriaQuery);
-        List<EntityType> entities = typedQuery.getResultList();
-        return entities;
+        return getResultList(criteriaQuery);
     }
 
     @Override
@@ -61,9 +59,7 @@ public abstract class BaseRepositoryImpl<EntityType extends BaseEntity, IdType e
         CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         criteriaQuery.select(criteriaBuilder.count(criteriaQuery.from(entityClass)));
-        TypedQuery<Long> typedQuery = getEntityManager().createQuery(criteriaQuery);
-        Long count = typedQuery.getSingleResult();
-        return count;
+        return getCount(criteriaQuery);
     }
    
     @Override
@@ -72,17 +68,18 @@ public abstract class BaseRepositoryImpl<EntityType extends BaseEntity, IdType e
         CriteriaQuery<EntityType> criteriaQuery = criteriaBuilder.createQuery(entityClass);
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(root);
-        if (filter != null) {
-            Criteria.applyFilterAnnotations(criteriaBuilder, criteriaQuery, root, filter);
-        }
-        TypedQuery<EntityType> typedQuery = getEntityManager().createQuery(criteriaQuery);
-        List<EntityType> entities = typedQuery.getResultList();
-        return entities;
+        Criteria.applyFilterAnnotations(criteriaBuilder, criteriaQuery, root, filter);
+        return getResultList(criteriaQuery);
     }
     
     @Override
     public Long countByFilter(BaseFilter filter) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+        Root<EntityType> root = criteriaQuery.from(entityClass);
+        criteriaQuery.select(criteriaBuilder.count(root));
+        Criteria.applyFilterAnnotations(criteriaBuilder, criteriaQuery, root, filter);
+        return getCount(criteriaQuery);
     }
     
     @Override
@@ -91,12 +88,7 @@ public abstract class BaseRepositoryImpl<EntityType extends BaseEntity, IdType e
         CriteriaQuery<EntityType> criteriaQuery = criteriaBuilder.createQuery(entityClass);
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(root);
-        TypedQuery typedQuery = getEntityManager().createQuery(criteriaQuery);
-        List<EntityType> entities = typedQuery
-                .setFirstResult(offset)
-                .setMaxResults(limit)
-                .getResultList();
-        return entities;
+        return getResultList(criteriaQuery, offset, limit);
     }
     
     @Override
@@ -104,12 +96,7 @@ public abstract class BaseRepositoryImpl<EntityType extends BaseEntity, IdType e
         CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         criteriaQuery.select(criteriaBuilder.count(criteriaQuery.from(entityClass)));
-        TypedQuery<Long> typedQuery = getEntityManager().createQuery(criteriaQuery);
-        Long count = typedQuery
-                .setFirstResult(offset)
-                .setMaxResults(limit)
-                .getSingleResult();
-        return count;
+        return getCount(criteriaQuery, offset, limit);
     }
 
     @Override
@@ -118,20 +105,18 @@ public abstract class BaseRepositoryImpl<EntityType extends BaseEntity, IdType e
         CriteriaQuery<EntityType> criteriaQuery = criteriaBuilder.createQuery(entityClass);
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(root);
-        if (filter != null) {
-            Criteria.applyFilterAnnotations(criteriaBuilder, criteriaQuery, root, filter);
-        }
-        TypedQuery typedQuery = getEntityManager().createQuery(criteriaQuery);
-        List<EntityType> entities = typedQuery
-                .setFirstResult(offset)
-                .setMaxResults(limit)
-                .getResultList();
-        return entities;
-    }    
+        Criteria.applyFilterAnnotations(criteriaBuilder, criteriaQuery, root, filter);
+        return getResultList(criteriaQuery, offset, limit);
+    }
 
     @Override
     public Long countByFilterWithPagination(BaseFilter filter, Integer offset, Integer limit) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+        Root<EntityType> root = criteriaQuery.from(entityClass);
+        criteriaQuery.select(criteriaBuilder.count(root));
+        Criteria.applyFilterAnnotations(criteriaBuilder, criteriaQuery, root, filter);
+        return getCount(criteriaQuery, offset, limit);
     }
 
     @Override
@@ -140,22 +125,48 @@ public abstract class BaseRepositoryImpl<EntityType extends BaseEntity, IdType e
         CriteriaQuery<EntityType> criteriaQuery = criteriaBuilder.createQuery(entityClass);
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(root);
-        if (mapList != null && !mapList.isEmpty()) {
-            Criteria.applyMapList(criteriaBuilder, criteriaQuery, root, mapList);
-        }
-        TypedQuery typedQuery = getEntityManager().createQuery(criteriaQuery);
-        List<EntityType> entities = typedQuery
-                .setFirstResult(offset)
-                .setMaxResults(limit)
-                .getResultList();
-        return entities;
-    }    
+        Criteria.applyMapList(criteriaBuilder, criteriaQuery, root, mapList);
+        return getResultList(criteriaQuery, offset, limit);
+    }
 
     @Override
     public Long countByMapListWithPagination(List<Map<String, String>> mapList, Integer offset, Integer limit) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+        Root<EntityType> root = criteriaQuery.from(entityClass);
+        criteriaQuery.select(criteriaBuilder.count(root));
+        Criteria.applyMapList(criteriaBuilder, criteriaQuery, root, mapList);
+        return getCount(criteriaQuery, offset, limit);
     }
 
+    private List<EntityType> getResultList(CriteriaQuery<?> criteriaQuery) {
+        TypedQuery typedQuery = getEntityManager().createQuery(criteriaQuery);
+        List<EntityType> entities = typedQuery.getResultList();
+        return entities;
+    }
+    
+    private List<EntityType> getResultList(CriteriaQuery<?> criteriaQuery, Integer offset, Integer limit) {
+        TypedQuery typedQuery = getEntityManager().createQuery(criteriaQuery);
+        List<EntityType> entities = typedQuery.setFirstResult(offset)
+                                              .setMaxResults(limit)
+                                              .getResultList();
+        return entities;
+    }
+    
+    private Long getCount(CriteriaQuery<Long> criteriaQuery) {
+        TypedQuery<Long> typedQuery = getEntityManager().createQuery(criteriaQuery);
+        Long count = typedQuery.getSingleResult();
+        return count;
+    }
+    
+    private Long getCount(CriteriaQuery<Long> criteriaQuery, Integer offset, Integer limit) {
+        TypedQuery<Long> typedQuery = getEntityManager().createQuery(criteriaQuery);
+        Long count = typedQuery.setFirstResult(offset)
+                               .setMaxResults(limit)
+                               .getSingleResult();
+        return count;
+    }
+    
     @Override
     public Path getPath(Root root, String strPath) {
         Path path = root;

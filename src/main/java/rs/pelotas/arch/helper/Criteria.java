@@ -20,25 +20,27 @@ public class Criteria {
                                               CriteriaQuery<?> criteriaQuery,
                                               Root<?> root,
                                               BaseFilter filter) {
-        List<Field> fields = new ArrayList<>();
-        Reflection.getAllFields(fields, filter.getClass());
-        for (Field field : fields) {
-            field.setAccessible(true);
-            Object fieldValue = null;
-            try {
-                fieldValue = field.get(filter);
-            } catch (IllegalArgumentException | IllegalAccessException ex) {
-                //TODO: Logger
-            }
-            if (fieldValue != null && field.isAnnotationPresent(CriteriaFilter.class)) {
-                CriteriaFilter criteriaFilter = field.getAnnotation(CriteriaFilter.class);
-                switch (criteriaFilter.method()) {
-                    case EQUAL:
-                        criteriaQuery.where(criteriaBuilder.equal(root.get(field.getName()), fieldValue));
-                        break;
-                    case BETWEEN:
-                        //TODO: Implementar consulta
-                        break;
+        if (filter != null) {
+            List<Field> fields = new ArrayList<>();
+            Reflection.getAllFields(fields, filter.getClass());
+            for (Field field : fields) {
+                field.setAccessible(true);
+                Object fieldValue = null;
+                try {
+                    fieldValue = field.get(filter);
+                } catch (IllegalArgumentException | IllegalAccessException ex) {
+                    //TODO: Logger
+                }
+                if (fieldValue != null && field.isAnnotationPresent(CriteriaFilter.class)) {
+                    CriteriaFilter criteriaFilter = field.getAnnotation(CriteriaFilter.class);
+                    switch (criteriaFilter.method()) {
+                        case EQUAL:
+                            criteriaQuery.where(criteriaBuilder.equal(root.get(field.getName()), fieldValue));
+                            break;
+                        case BETWEEN:
+                            //TODO: Implementar consulta
+                            break;
+                    }
                 }
             }
         }
@@ -48,11 +50,13 @@ public class Criteria {
                                     CriteriaQuery<?> criteriaQuery,
                                     Root<?> root,
                                     List<Map<String, String>> mapList) {
-        for (Map<String, String> filter : mapList) {
-            for (Map.Entry<String, String> entry : filter.entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue();
-                criteriaQuery.where(criteriaBuilder.equal(root.get(key), value));
+        if (mapList != null && !mapList.isEmpty()) {
+            for (Map<String, String> filter : mapList) {
+                for (Map.Entry<String, String> entry : filter.entrySet()) {
+                    String key = entry.getKey();
+                    String value = entry.getValue();
+                    criteriaQuery.where(criteriaBuilder.equal(root.get(key), value));
+                }
             }
         }
     }

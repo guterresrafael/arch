@@ -29,8 +29,6 @@ public interface BaseResource<EntityType extends BaseEntity, IdType extends Seri
     
     BaseService<EntityType, IdType> getService();
     
-    ResponseBuilder getResponseBuilder();
-
     Integer getOffsetDefaultValue();
     
     Integer getLimitDefaultValue();
