@@ -42,7 +42,7 @@ public interface BaseService<EntityType extends BaseEntity, IdType extends Seria
     
     Long countByFilterWithPagination(BaseFilter filter, Integer offset, Integer limit);
     
-    List<EntityType> findByFieldListWithPagination(List<Field> fieldList, Integer offset, Integer limit);
+    List<EntityType> findByFieldListWithPagination(List<Field> filterList, List<Field> sortList, Integer offset, Integer limit);
     
     Long countByFieldListWithPagination(List<Field> fieldList, Integer offset, Integer limit);
 }

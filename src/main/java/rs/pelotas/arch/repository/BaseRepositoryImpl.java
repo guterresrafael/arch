@@ -68,7 +68,7 @@ public abstract class BaseRepositoryImpl<EntityType extends BaseEntity, IdType e
         CriteriaQuery<EntityType> criteriaQuery = criteriaBuilder.createQuery(entityClass);
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(root);
-        Criteria.applyFilterAnnotations(criteriaBuilder, criteriaQuery, root, filter);
+        Criteria.addWhere(criteriaBuilder, criteriaQuery, root, filter);
         return getResultList(criteriaQuery);
     }
     
@@ -78,7 +78,7 @@ public abstract class BaseRepositoryImpl<EntityType extends BaseEntity, IdType e
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(criteriaBuilder.count(root));
-        Criteria.applyFilterAnnotations(criteriaBuilder, criteriaQuery, root, filter);
+        Criteria.addWhere(criteriaBuilder, criteriaQuery, root, filter);
         return getCount(criteriaQuery);
     }
     
@@ -105,7 +105,7 @@ public abstract class BaseRepositoryImpl<EntityType extends BaseEntity, IdType e
         CriteriaQuery<EntityType> criteriaQuery = criteriaBuilder.createQuery(entityClass);
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(root);
-        Criteria.applyFilterAnnotations(criteriaBuilder, criteriaQuery, root, filter);
+        Criteria.addWhere(criteriaBuilder, criteriaQuery, root, filter);
         return getResultList(criteriaQuery, offset, limit);
     }
 
@@ -115,17 +115,19 @@ public abstract class BaseRepositoryImpl<EntityType extends BaseEntity, IdType e
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(criteriaBuilder.count(root));
-        Criteria.applyFilterAnnotations(criteriaBuilder, criteriaQuery, root, filter);
+        Criteria.addWhere(criteriaBuilder, criteriaQuery, root, filter);
         return getCount(criteriaQuery, offset, limit);
     }
 
     @Override
-    public List<EntityType> findByFieldListWithPagination(List<Field> fieldList, Integer offset, Integer limit) {
+    public List<EntityType> findByFieldListWithPagination(List<Field> filterList, List<Field> sortList,
+                                                          Integer offset, Integer limit) {
         CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<EntityType> criteriaQuery = criteriaBuilder.createQuery(entityClass);
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(root);
-        Criteria.applyFieldList(criteriaBuilder, criteriaQuery, root, fieldList);
+        Criteria.addWhere(criteriaBuilder, criteriaQuery, root, filterList);
+        Criteria.addOrderBy(criteriaBuilder, criteriaQuery, root, sortList);
         return getResultList(criteriaQuery, offset, limit);
     }
 
@@ -135,7 +137,7 @@ public abstract class BaseRepositoryImpl<EntityType extends BaseEntity, IdType e
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(criteriaBuilder.count(root));
-        Criteria.applyFieldList(criteriaBuilder, criteriaQuery, root, fieldList);
+        Criteria.addWhere(criteriaBuilder, criteriaQuery, root, fieldList);
         return getCount(criteriaQuery, offset, limit);
     }
 

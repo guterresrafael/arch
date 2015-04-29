@@ -86,8 +86,8 @@ public abstract class BaseServiceImpl<EntityType extends BaseEntity, IdType exte
     }
 
     @Override
-    public List<EntityType> findByFieldListWithPagination(List<Field> fieldList, Integer offset, Integer limit) {
-        return getRepository().findByFieldListWithPagination(fieldList, offset, limit);
+    public List<EntityType> findByFieldListWithPagination(List<Field> filterList, List<Field> sortList, Integer offset, Integer limit) {
+        return getRepository().findByFieldListWithPagination(filterList, sortList, offset, limit);
     }
 
     @Override

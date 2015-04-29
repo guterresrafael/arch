@@ -10,7 +10,7 @@ import rs.pelotas.arch.enumeration.OrderBy;
  *
  * @author Rafael Guterres
  */
-public class Field implements Comparable<Field> {
+public class Field {
 
     private static final String DATE_SEPARATOR_CHARACTER = "-";
     
@@ -19,7 +19,6 @@ public class Field implements Comparable<Field> {
     private Class<?> clazz;
     private Method method;
     private OrderBy orderBy;
-    private Integer orderPriority;
 
     public String getName() {
         return name;
@@ -64,14 +63,6 @@ public class Field implements Comparable<Field> {
         this.orderBy = orderBy;
     }
 
-    public Integer getOrderPriority() {
-        return orderPriority;
-    }
-
-    public void setOrderPriority(Integer orderPriority) {
-        this.orderPriority = orderPriority;
-    }
-
     private void defineFieldClassFromFieldValue() {
         try {
             String valueString = value.toString();
@@ -93,10 +84,5 @@ public class Field implements Comparable<Field> {
         } catch (Exception e) {
         }
         this.setClazz(String.class);
-    }
-    
-    @Override
-    public int compareTo(Field obj) {
-        return this.orderPriority.compareTo(obj.orderPriority);
     }
 }

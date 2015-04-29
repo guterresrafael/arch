@@ -1,13 +1,9 @@
 package rs.pelotas.arch.helper;
 
 import java.lang.reflect.Field;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -23,10 +19,8 @@ public class Criteria {
     private static final String LIKE_PARAM_VALUE = "*";
     private static final String LIKE_CRITERIA_VALUE = "%";
     
-    public static void applyFilterAnnotations(CriteriaBuilder criteriaBuilder,
-                                              CriteriaQuery criteriaQuery,
-                                              Root root,
-                                              BaseFilter filter) {
+    public static void addWhere(CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery,
+                                Root root, BaseFilter filter) {
         if (filter != null) {
             List<Field> fields = new ArrayList<>();
             Reflection.getAllFields(fields, filter.getClass());
@@ -44,47 +38,30 @@ public class Criteria {
                     fieldFilter.setValue(fieldValue);
                     fieldFilter.setClazz(filter.getClass());
                     fieldFilter.setMethod(criteriaFilter.method());
-                    applyMethod(criteriaBuilder, criteriaQuery, root, fieldFilter);
-                }
-            }
-        }
-    }
-    
-    public static void applyMapList(CriteriaBuilder criteriaBuilder,
-                                    CriteriaQuery<?> criteriaQuery,
-                                    Root<?> root,
-                                    List<Map<String, String>> mapList) {
-        if (mapList != null && !mapList.isEmpty()) {
-            for (Map<String, String> filter : mapList) {
-                for (Map.Entry<String, String> entry : filter.entrySet()) {
-                    String key = entry.getKey();
-                    String value = entry.getValue();
-                    criteriaQuery.where(criteriaBuilder.equal(root.get(key), value));
+                    Criteria.addWhere(criteriaBuilder, criteriaQuery, root, fieldFilter);
                 }
             }
         }
     }
 
-    public static void applyFieldList(CriteriaBuilder criteriaBuilder,
-                                      CriteriaQuery<?> criteriaQuery,
-                                      Root<?> root,
-                                      List<rs.pelotas.arch.helper.Field> fieldList) {
-        if (fieldList != null && !fieldList.isEmpty()) {
-            for (rs.pelotas.arch.helper.Field field : fieldList) {
-                applyMethod(criteriaBuilder, criteriaQuery, root, field);
+    public static void addWhere(CriteriaBuilder criteriaBuilder, CriteriaQuery<?> criteriaQuery,
+                                Root<?> root, List<rs.pelotas.arch.helper.Field> filterList) {
+        if (filterList != null && !filterList.isEmpty()) {
+            for (rs.pelotas.arch.helper.Field field : filterList) {
+                Criteria.addWhere(criteriaBuilder, criteriaQuery, root, field);
             }
         }
     }
     
-    private static void applyMethod(CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery,
-                                    Root root, rs.pelotas.arch.helper.Field field) {
-        applyMethodWithValueBased(criteriaBuilder, criteriaQuery, root, field);
-        applyMethodWithoutValueBased(criteriaBuilder, criteriaQuery, root, field);
-        applyMethodWithComparableClassBased(criteriaBuilder, criteriaQuery, root, field);
+    private static void addWhere(CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery,
+                                 Root root, rs.pelotas.arch.helper.Field field) {
+        addWhereWithValueBased(criteriaBuilder, criteriaQuery, root, field);
+        addWhereWithoutValueBased(criteriaBuilder, criteriaQuery, root, field);
+        addWhereWithComparableClassBased(criteriaBuilder, criteriaQuery, root, field);
     }
 
-    private static void applyMethodWithValueBased(CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery,
-                                                  Root root, rs.pelotas.arch.helper.Field field) {
+    private static void addWhereWithValueBased(CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery,
+                                               Root root, rs.pelotas.arch.helper.Field field) {
         switch (field.getMethod()) {
             case EQUAL:
                 criteriaQuery.where(criteriaBuilder.equal(root.get(field.getName()), field.getValue()));
@@ -101,8 +78,8 @@ public class Criteria {
         }
     }    
     
-    private static void applyMethodWithoutValueBased(CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery,
-                                                     Root root, rs.pelotas.arch.helper.Field field) {
+    private static void addWhereWithoutValueBased(CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery,
+                                                  Root root, rs.pelotas.arch.helper.Field field) {
         switch (field.getMethod()) {
                 case IS_NULL:
                 criteriaQuery.where(criteriaBuilder.isNull(root.get(field.getName())));
@@ -122,8 +99,9 @@ public class Criteria {
         }
     }
     
-    private static void applyMethodWithComparableClassBased(CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery,
-                                                            Root root, rs.pelotas.arch.helper.Field field) {
+    private static void addWhereWithComparableClassBased(CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery,
+                                                         Root root, rs.pelotas.arch.helper.Field field) {
+        //TODO: Refactor para utilizar "field.getClazz.cast(field.getValue)"
         boolean isDate = field.getClazz().getName().equals(Date.class.getName());
         switch (field.getMethod()) {
             case GREATER:
@@ -157,7 +135,8 @@ public class Criteria {
         }
     }
 
-    private static void applyOrderBy () {
+    public static void addOrderBy (CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery,
+                                     Root root, List<rs.pelotas.arch.helper.Field> sortList) {
         //TODO: implementar suporte a ordenacao
     }
     
