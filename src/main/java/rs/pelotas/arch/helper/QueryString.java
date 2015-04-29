@@ -123,40 +123,61 @@ public class QueryString {
                 Field field = new Field();
                 field.setName(paramName);
                 field.setValue(request.getParameter(paramName));
-                this.defineMethodField(field);
+                this.defineFieldMethod(field);
                 this.filterList.add(field);
             }
         }
     }
     
-    private void defineMethodField(Field field) {
-        String operatorLeft = field.getName().substring(field.getName().length() -1);
-        switch(operatorLeft) {
-            case GREATER_OPERATOR:
-                field.setMethod(Method.GREATER_OR_EQUAL);
-                break;
-            case LESS_OPERATOR:
-                field.setMethod(Method.LESS_OR_EQUAL);
-                break;
-            case NOT_OPERATOR:
-                field.setMethod(Method.NOT_EQUAL);
-        }
-        if (field.getMethod() != null) {
-            field.setName(field.getName().substring(0, field.getName().length() -1));
-        }
-   
-        String fieldValue = (String) field.getValue();
-        if (fieldValue.contains(LIKE_OPERATOR)) {
-            if (field.getMethod() != null &&
-                field.getMethod().equals(Method.NOT_EQUAL)) {
-                field.setMethod(Method.NOT_LIKE);
-            } else {
-                field.setMethod(Method.LIKE);
-            }
-        }
-        
+    private void defineFieldMethod(Field field) {
+        this.defineFieldMethodFromFieldName(field);
+        this.defineFieldMethodFromFieldValue(field);
         if (field.getMethod() == null) {
             field.setMethod(Method.EQUAL);    
+        }
+    }
+    
+    private void defineFieldMethodFromFieldName(Field field) {
+        if (field.getName() != null) {
+            String operatorLeft = field.getName().substring(field.getName().length() -1);
+            switch(operatorLeft) {
+                case GREATER_OPERATOR:
+                    field.setMethod(Method.GREATER_OR_EQUAL);
+                    break;
+                case LESS_OPERATOR:
+                    field.setMethod(Method.LESS_OR_EQUAL);
+                    break;
+                case NOT_OPERATOR:
+                    field.setMethod(Method.NOT_EQUAL);
+            }
+            if (field.getMethod() != null) {
+                field.setName(field.getName().substring(0, field.getName().length() -1));
+            }
+        }
+    }
+    
+    private void defineFieldMethodFromFieldValue(Field field) {
+        if (field.getValue() == null || field.getValue().toString().isEmpty()) {
+            String[] fieldArray = null;
+            if (field.getName().contains(GREATER_OPERATOR)) {
+                field.setMethod(Method.GREATER);
+                fieldArray = field.getName().split(GREATER_OPERATOR);
+            } else if (field.getName().contains(LESS_OPERATOR)) {
+                field.setMethod(Method.LESS);
+                fieldArray = field.getName().split(LESS_OPERATOR);
+            }
+            field.setName(fieldArray[0]);
+            field.setValue(fieldArray[1]);
+        } else {
+            String fieldValue = (String) field.getValue();
+            if (fieldValue.contains(LIKE_OPERATOR)) {
+                if (field.getMethod() != null &&
+                    field.getMethod().equals(Method.NOT_EQUAL)) {
+                    field.setMethod(Method.NOT_LIKE);
+                } else {
+                    field.setMethod(Method.LIKE);
+                }
+            }
         }
     }
 }
