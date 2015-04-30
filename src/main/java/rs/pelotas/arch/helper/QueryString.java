@@ -22,6 +22,8 @@ public class QueryString {
     private static final String LESS_OPERATOR = "<";
     private static final String NOT_OPERATOR = "!";
     private static final String LIKE_OPERATOR = "*";
+    private static final String BETWEEN_OPERATOR = "...";
+    private static final String BETWEEN_REGEX = "\\.\\.\\.";
     
     private Integer offset;
     private Integer limit;
@@ -120,9 +122,10 @@ public class QueryString {
             try {
                 Param.valueOf(paramName.toUpperCase());
             } catch (IllegalArgumentException e) {
+                String paramValue = request.getParameter(paramName);
                 Field field = new Field();
                 field.setName(paramName);
-                field.setValue(request.getParameter(paramName));
+                field.setValue(paramValue);
                 this.defineFieldMethod(field);
                 this.filterList.add(field);
             }
@@ -130,16 +133,16 @@ public class QueryString {
     }
     
     private void defineFieldMethod(Field field) {
-        this.defineFieldMethodFromFieldName(field);
-        this.defineFieldMethodFromFieldValue(field);
-        if (field.getMethod() == null) {
-            field.setMethod(Method.EQUAL);    
-        }
+        this.defineFieldMethodWithEqualsBased(field);
+        this.defineFieldMethodWithComparableBased(field);
+        this.defineFieldMethodWithLikeBased(field);
+        this.defineFieldMethodDefault(field);
     }
     
-    private void defineFieldMethodFromFieldName(Field field) {
+    private void defineFieldMethodWithEqualsBased(Field field) {
         if (field.getName() != null) {
-            String operatorLeft = field.getName().substring(field.getName().length() -1);
+            String paramName = field.getName();
+            String operatorLeft = paramName.substring(paramName.length() -1);
             switch(operatorLeft) {
                 case GREATER_OPERATOR:
                     field.setMethod(Method.GREATER_OR_EQUAL);
@@ -151,12 +154,12 @@ public class QueryString {
                     field.setMethod(Method.NOT_EQUAL);
             }
             if (field.getMethod() != null) {
-                field.setName(field.getName().substring(0, field.getName().length() -1));
+                field.setName(paramName.substring(0, paramName.length() -1));
             }
         }
     }
     
-    private void defineFieldMethodFromFieldValue(Field field) {
+    private void defineFieldMethodWithComparableBased(Field field) {
         if (field.getValue() == null || field.getValue().toString().isEmpty()) {
             String[] fieldArray = null;
             if (field.getName().contains(GREATER_OPERATOR)) {
@@ -169,15 +172,32 @@ public class QueryString {
             field.setName(fieldArray[0]);
             field.setValue(fieldArray[1]);
         } else {
+            String[] fieldArray = null;
+            if (field.getValue().toString().contains(BETWEEN_OPERATOR)) {
+                field.setMethod(Method.BETWEEN);
+                fieldArray = field.getValue().toString().split(BETWEEN_REGEX);
+            }
+            field.setValue(fieldArray[0]);
+            field.setField(new Field(field.getName(), fieldArray[1]));
+        }
+    }
+    
+    private void defineFieldMethodWithLikeBased(Field field) {
+        if (field.getValue() != null ) {
             String fieldValue = (String) field.getValue();
             if (fieldValue.contains(LIKE_OPERATOR)) {
-                if (field.getMethod() != null &&
-                    field.getMethod().equals(Method.NOT_EQUAL)) {
+                if (field.getMethod() != null && field.getMethod().equals(Method.NOT_EQUAL)) {
                     field.setMethod(Method.NOT_LIKE);
                 } else {
                     field.setMethod(Method.LIKE);
                 }
             }
+        }
+    }
+    
+    private void defineFieldMethodDefault(Field field) {
+        if (field.getMethod() == null) {
+            field.setMethod(Method.EQUAL);
         }
     }
 }

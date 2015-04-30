@@ -2,10 +2,10 @@ package rs.pelotas.arch.helper;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import rs.pelotas.arch.annotation.CriteriaFilter;
 import rs.pelotas.arch.filter.BaseFilter;
@@ -22,6 +22,7 @@ public class Criteria {
     public static void addWhere(CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery,
                                 Root root, BaseFilter filter) {
         if (filter != null) {
+            List<Predicate> predicates = new ArrayList<>();
             List<Field> fields = new ArrayList<>();
             Reflection.getAllFields(fields, filter.getClass());
             for (Field field : fields) {
@@ -38,8 +39,11 @@ public class Criteria {
                     fieldFilter.setValue(fieldValue);
                     fieldFilter.setClazz(filter.getClass());
                     fieldFilter.setMethod(criteriaFilter.method());
-                    Criteria.addWhere(criteriaBuilder, criteriaQuery, root, fieldFilter);
+                    Criteria.addPredicate(predicates, criteriaBuilder, root, fieldFilter);
                 }
+            }
+            if (!predicates.isEmpty()) {
+                criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[] {})));
             }
         }
     }
@@ -47,96 +51,84 @@ public class Criteria {
     public static void addWhere(CriteriaBuilder criteriaBuilder, CriteriaQuery<?> criteriaQuery,
                                 Root<?> root, List<rs.pelotas.arch.helper.Field> filterList) {
         if (filterList != null && !filterList.isEmpty()) {
+            List<Predicate> predicates = new ArrayList<>();
             for (rs.pelotas.arch.helper.Field field : filterList) {
-                Criteria.addWhere(criteriaBuilder, criteriaQuery, root, field);
+                Criteria.addPredicate(predicates, criteriaBuilder, root, field);
+            }
+            if (!predicates.isEmpty()) {
+                criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[] {})));            
             }
         }
     }
     
-    private static void addWhere(CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery,
-                                 Root root, rs.pelotas.arch.helper.Field field) {
-        addWhereWithValueBased(criteriaBuilder, criteriaQuery, root, field);
-        addWhereWithoutValueBased(criteriaBuilder, criteriaQuery, root, field);
-        addWhereWithComparableClassBased(criteriaBuilder, criteriaQuery, root, field);
+    private static void addPredicate(List<Predicate> predicates, CriteriaBuilder criteriaBuilder,
+                                     Root root, rs.pelotas.arch.helper.Field field) {
+        addPredicateWithValueBased(predicates, criteriaBuilder, root, field);
+        addPredicateWithoutValueBased(predicates, criteriaBuilder, root, field);
+        addPredicateWithComparableBased(predicates, criteriaBuilder, root, field);
     }
 
-    private static void addWhereWithValueBased(CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery,
-                                               Root root, rs.pelotas.arch.helper.Field field) {
+    private static void addPredicateWithValueBased(List<Predicate> predicates, CriteriaBuilder criteriaBuilder,
+                                                   Root root, rs.pelotas.arch.helper.Field field) {
         switch (field.getMethod()) {
             case EQUAL:
-                criteriaQuery.where(criteriaBuilder.equal(root.get(field.getName()), field.getValue()));
+                predicates.add(criteriaBuilder.equal(root.get(field.getName()), field.getValue()));
                 break;
             case NOT_EQUAL:
-                criteriaQuery.where(criteriaBuilder.notEqual(root.get(field.getName()), field.getValue()));
+                predicates.add(criteriaBuilder.notEqual(root.get(field.getName()), field.getValue()));
                 break;
             case LIKE:
-                criteriaQuery.where(criteriaBuilder.like(root.get(field.getName()), addLikeChar(field.getValue())));
+                predicates.add(criteriaBuilder.like(root.get(field.getName()), addLikeChar(field.getValue())));
                 break;
             case NOT_LIKE:
-                criteriaQuery.where(criteriaBuilder.notLike(root.get(field.getName()), addLikeChar(field.getValue())));
+                predicates.add(criteriaBuilder.notLike(root.get(field.getName()), addLikeChar(field.getValue())));
                 break;
         }
     }    
     
-    private static void addWhereWithoutValueBased(CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery,
-                                                  Root root, rs.pelotas.arch.helper.Field field) {
+    private static void addPredicateWithoutValueBased(List<Predicate> predicates, CriteriaBuilder criteriaBuilder,
+                                                      Root root, rs.pelotas.arch.helper.Field field) {
         switch (field.getMethod()) {
                 case IS_NULL:
-                criteriaQuery.where(criteriaBuilder.isNull(root.get(field.getName())));
+                predicates.add(criteriaBuilder.isNull(root.get(field.getName())));
                 break;
             case IS_NOT_NULL:
-                criteriaQuery.where(criteriaBuilder.isNotNull(root.get(field.getName())));
+                predicates.add(criteriaBuilder.isNotNull(root.get(field.getName())));
                 break;
             case IS_FALSE:
-                criteriaQuery.where(criteriaBuilder.isFalse(root.get(field.getName())));
+                predicates.add(criteriaBuilder.isFalse(root.get(field.getName())));
                 break;
             case IS_TRUE:
-                criteriaQuery.where(criteriaBuilder.isTrue(root.get(field.getName())));
+                predicates.add(criteriaBuilder.isTrue(root.get(field.getName())));
                 break;
             case IS_EMPTY:
-                criteriaQuery.where(criteriaBuilder.isEmpty(root.get(field.getName())));
+                predicates.add(criteriaBuilder.isEmpty(root.get(field.getName())));
                 break;
         }
     }
     
-    private static void addWhereWithComparableClassBased(CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery,
-                                                         Root root, rs.pelotas.arch.helper.Field field) {
-        //TODO: Refactor para utilizar "field.getClazz.cast(field.getValue)"
-        boolean isDate = field.getClazz().getName().equals(Date.class.getName());
+    private static void addPredicateWithComparableBased(List<Predicate> predicates, CriteriaBuilder criteriaBuilder,
+                                                             Root root, rs.pelotas.arch.helper.Field field) {
         switch (field.getMethod()) {
             case GREATER:
-                if (isDate) {
-                    criteriaQuery.where(criteriaBuilder.greaterThan(root.get(field.getName()), (Date) field.getValue()));
-                } else {
-                    criteriaQuery.where(criteriaBuilder.greaterThan(root.get(field.getName()), (Long) field.getValue()));
-                }
+                predicates.add(criteriaBuilder.greaterThan(root.get(field.getName()), field.getValueComparable()));
                 break;
             case GREATER_OR_EQUAL:
-                if (isDate) {
-                    criteriaQuery.where(criteriaBuilder.greaterThanOrEqualTo(root.get(field.getName()), (Date) field.getValue()));
-                } else {
-                    criteriaQuery.where(criteriaBuilder.greaterThanOrEqualTo(root.get(field.getName()), (Long) field.getValue()));
-                }                
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(field.getName()), field.getValueComparable()));
                 break;
             case LESS:
-                if (isDate) {
-                    criteriaQuery.where(criteriaBuilder.lessThan(root.get(field.getName()), (Date) field.getValue()));
-                } else {
-                    criteriaQuery.where(criteriaBuilder.lessThan(root.get(field.getName()), (Long) field.getValue()));
-                }
+                predicates.add(criteriaBuilder.lessThan(root.get(field.getName()), field.getValueComparable()));
                 break;
             case LESS_OR_EQUAL:
-                if (isDate) {
-                    criteriaQuery.where(criteriaBuilder.lessThanOrEqualTo(root.get(field.getName()), (Date) field.getValue()));
-                } else {
-                    criteriaQuery.where(criteriaBuilder.lessThanOrEqualTo(root.get(field.getName()), (Long) field.getValue()));
-                }
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get(field.getName()), field.getValueComparable()));
                 break;
+            case BETWEEN:
+                predicates.add(criteriaBuilder.between(root.get(field.getName()), field.getValueComparable(), field.getField().getValueComparable()));
         }
     }
 
     public static void addOrderBy (CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery,
-                                     Root root, List<rs.pelotas.arch.helper.Field> sortList) {
+                                   Root root, List<rs.pelotas.arch.helper.Field> sortList) {
         //TODO: implementar suporte a ordenacao
     }
     

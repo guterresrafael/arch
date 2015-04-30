@@ -19,7 +19,22 @@ public class Field {
     private Class<?> clazz;
     private Method method;
     private OrderBy orderBy;
+    private Field field;
 
+    public Field() {
+    }
+
+    public Field(String name, Object value) {
+        this.name = name;
+        this.value = value;
+    }
+
+    public Field(String name, Object value, Method method) {
+        this.name = name;
+        this.value = value;
+        this.method = method;
+    }
+    
     public String getName() {
         return name;
     }
@@ -37,9 +52,6 @@ public class Field {
     }
 
     public Class<?> getClazz() {
-        if (this.clazz == null) {
-            this.defineFieldClassFromFieldValue();
-        }
         return clazz;
     }
 
@@ -63,26 +75,34 @@ public class Field {
         this.orderBy = orderBy;
     }
 
-    private void defineFieldClassFromFieldValue() {
+    public Field getField() {
+        return field;
+    }
+
+    public void setField(Field field) {
+        this.field = field;
+    }
+
+    public Comparable getValueComparable() {
+        if (this.clazz != null && this.value instanceof Comparable) {
+            return (Comparable) this.value;
+        }
+        return getValueComparableFromParse();
+    }
+    
+    private Comparable getValueComparableFromParse() {
         try {
-            String valueString = value.toString();
-            String[] dateArray = valueString.split(DATE_SEPARATOR_CHARACTER);
+            String[] dateArray = ((String) this.value).split(DATE_SEPARATOR_CHARACTER);
             LocalDate localDate = LocalDate.of(Integer.parseInt(dateArray[0]),
                                                Integer.parseInt(dateArray[1]),
                                                Integer.parseInt(dateArray[2]));
-            Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-            this.setClazz(Date.class);
-            this.setValue(date);
-            return;
+            return (Comparable) Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         } catch (Exception e) {
         }
         try {
-            Long longValue = Long.parseLong(value.toString());
-            this.setClazz(Long.class);
-            this.setValue(longValue);
-            return;
+            return (Comparable) Long.parseLong((String) this.value);
         } catch (Exception e) {
         }
-        this.setClazz(String.class);
+        return (Comparable) this.value;
     }
 }
