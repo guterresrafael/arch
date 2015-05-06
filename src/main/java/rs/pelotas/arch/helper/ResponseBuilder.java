@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -23,7 +24,7 @@ public class ResponseBuilder {
     }
 
     public static Response ok(List<Object> entities) {
-        return Response.status(Response.Status.OK).entity(entities).build();
+        return Response.ok(entities, MediaType.APPLICATION_JSON).build();
     }
     
     public static Response created() {

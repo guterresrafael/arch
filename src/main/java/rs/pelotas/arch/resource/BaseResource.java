@@ -1,18 +1,8 @@
 package rs.pelotas.arch.resource;
 
 import java.io.Serializable;
-import javax.annotation.security.PermitAll;
+import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.pelotas.arch.entity.BaseEntity;
 import rs.pelotas.arch.service.BaseService;
@@ -23,8 +13,6 @@ import rs.pelotas.arch.service.BaseService;
  * @param <EntityType>
  * @param <IdType>
  */
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 public interface BaseResource<EntityType extends BaseEntity, IdType extends Serializable> extends Serializable {
     
     BaseService<EntityType, IdType> getService();
@@ -33,28 +21,13 @@ public interface BaseResource<EntityType extends BaseEntity, IdType extends Seri
     
     Integer getLimitDefaultValue();
     
-    @PermitAll
-    @GET
-    @Path("/{id}")
-    Response getEntityById(@PathParam("id") IdType id);
+    EntityType getEntityById(IdType id);
     
-    @PermitAll
-    @GET
-    @Path("/")
-    Response getEntities(@Context HttpServletRequest request);    
+    Collection<EntityType> getEntities(HttpServletRequest request);    
     
-    @PermitAll
-    @POST
-    @Path("/")
     Response postEntity(EntityType entity);
 
-    @PermitAll
-    @PUT
-    @Path("/")
-    Response putEntity(EntityType entity);
+    Response putEntity(IdType id, EntityType entity);
     
-    @PermitAll
-    @DELETE
-    @Path("/{id}")
-    Response deleteEntity(@PathParam("id") IdType id);
+    Response deleteEntity(IdType id);
 }

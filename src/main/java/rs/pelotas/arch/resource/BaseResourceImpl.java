@@ -5,11 +5,13 @@ import rs.pelotas.arch.helper.ResponseBuilder;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import rs.pelotas.arch.entity.BaseEntity;
 import rs.pelotas.arch.helper.Reflection;
@@ -37,16 +39,16 @@ public abstract class BaseResourceImpl<EntityType extends BaseEntity, IdType ext
     }
 
     @Override
-    public Response getEntityById(IdType id) {
+    public EntityType getEntityById(IdType id) {
         EntityType entity = getService().load(id);
         if (entity == null) {
-            return ResponseBuilder.notFound();
+            throw new WebApplicationException(ResponseBuilder.notFound());
         }
-        return ResponseBuilder.ok(entity);
+        return entity;
     }
 
     @Override
-    public Response getEntities(HttpServletRequest request) {
+    public Collection<EntityType> getEntities(HttpServletRequest request) {
         try {
             List entities;
             QueryString queryString = new QueryString(request);
@@ -74,18 +76,18 @@ public abstract class BaseResourceImpl<EntityType extends BaseEntity, IdType ext
             
             //NotFound
             if (entities.isEmpty()) {
-                return ResponseBuilder.notFound();
+                throw new WebApplicationException(ResponseBuilder.notFound());
             }
             
             //Custom Fields
             if (!queryString.getFieldList().isEmpty()) {
                 entities = createEntitiesMapListByQueryParams(entities, queryString);
-                return ResponseBuilder.ok(entities);
+                return entities;
             } else {
-                return ResponseBuilder.ok(entities);
+                return entities;
             }
         } catch (Exception e) {
-            return ResponseBuilder.badRequest(e);
+            throw new WebApplicationException(ResponseBuilder.badRequest(e));
         }
     }
 
@@ -103,7 +105,7 @@ public abstract class BaseResourceImpl<EntityType extends BaseEntity, IdType ext
     }
 
     @Override
-    public Response putEntity(EntityType entity) {
+    public Response putEntity(IdType id, EntityType entity) {
         try {
             getService().validate(entity);
             entity = getService().save(entity);

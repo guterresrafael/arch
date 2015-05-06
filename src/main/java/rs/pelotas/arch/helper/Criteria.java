@@ -56,7 +56,7 @@ public class Criteria {
                 Criteria.addPredicate(predicates, criteriaBuilder, root, field);
             }
             if (!predicates.isEmpty()) {
-                criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[] {})));            
+                criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[] {})));
             }
         }
     }
