@@ -39,15 +39,6 @@ public abstract class BaseResourceImpl<EntityType extends BaseEntity, IdType ext
     }
 
     @Override
-    public EntityType getEntityById(IdType id) {
-        EntityType entity = getService().load(id);
-        if (entity == null) {
-            throw new WebApplicationException(ResponseBuilder.notFound());
-        }
-        return entity;
-    }
-
-    @Override
     public Collection<EntityType> getEntities(HttpServletRequest request) {
         try {
             List entities;
@@ -104,6 +95,15 @@ public abstract class BaseResourceImpl<EntityType extends BaseEntity, IdType ext
         }
     }
 
+    @Override
+    public EntityType getEntityById(IdType id) {
+        EntityType entity = getService().load(id);
+        if (entity == null) {
+            throw new WebApplicationException(ResponseBuilder.notFound());
+        }
+        return entity;
+    }
+    
     @Override
     public Response putEntity(IdType id, EntityType entity) {
         try {

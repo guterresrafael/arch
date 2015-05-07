@@ -21,11 +21,11 @@ public interface BaseResource<EntityType extends BaseEntity, IdType extends Seri
     
     Integer getLimitDefaultValue();
     
-    EntityType getEntityById(IdType id);
-    
     Collection<EntityType> getEntities(HttpServletRequest request);    
     
     Response postEntity(EntityType entity);
+    
+    EntityType getEntityById(IdType id);
 
     Response putEntity(IdType id, EntityType entity);
     
