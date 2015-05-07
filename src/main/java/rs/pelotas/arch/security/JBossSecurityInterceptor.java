@@ -28,9 +28,9 @@ public class JBossSecurityInterceptor implements ContainerRequestFilter {
 
     private static final String AUTHORIZATION_PROPERTY = "Authorization";
     private static final String AUTHENTICATION_SCHEME = "Basic";
-    private static final ServerResponse ACCESS_DENIED = new ServerResponse("Access denied for this resource", 401, new Headers<>());
-    private static final ServerResponse ACCESS_FORBIDDEN = new ServerResponse("Nobody can access this resource", 403, new Headers<>());
-    private static final ServerResponse SERVER_ERROR = new ServerResponse("INTERNAL SERVER ERROR", 500, new Headers<>());
+    private static final ServerResponse ACCESS_DENIED = new ServerResponse(null, 401, new Headers<>());
+    private static final ServerResponse ACCESS_FORBIDDEN = new ServerResponse(null, 403, new Headers<>());
+    private static final ServerResponse SERVER_ERROR = new ServerResponse(null, 500, new Headers<>());
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {

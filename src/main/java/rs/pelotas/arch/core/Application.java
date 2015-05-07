@@ -1,10 +1,7 @@
 package rs.pelotas.arch.core;
 
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.ws.rs.ApplicationPath;
-import rs.pelotas.arch.concurrency.Scheduler;
+import rs.pelotas.arch.batch.JobScheduler;
 
 /**
  *
@@ -13,18 +10,11 @@ import rs.pelotas.arch.concurrency.Scheduler;
  * 
  * @author Rafael Guterres
  */
-@ApplicationPath("/api")
-public class Application extends javax.ws.rs.core.Application {
+public abstract class Application extends javax.ws.rs.core.Application {
 
-    @Inject
-    Scheduler scheduler;
+    public abstract JobScheduler getScheduler();
     
-    @Inject
-    Logger logger;
+    public abstract Logger getLogger();
     
-    @PostConstruct
-    private void init() {
-        logger.info("Application initialization..");
-        scheduler.scheduleJobs();
-    }
+    protected abstract void init();
 }
