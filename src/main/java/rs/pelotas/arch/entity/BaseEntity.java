@@ -1,7 +1,9 @@
 package rs.pelotas.arch.entity;
 
 import java.io.Serializable;
-import javax.xml.bind.annotation.XmlElementRef;
+import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import org.jboss.resteasy.links.RESTServiceDiscovery;
 
 /**
@@ -11,7 +13,9 @@ import org.jboss.resteasy.links.RESTServiceDiscovery;
  */
 public abstract class BaseEntity<IdType> implements Serializable {
     
-    @XmlElementRef
+    @XmlElementWrapper(name = "links")
+    @XmlElement(name = "link")
+    @Transient
     private RESTServiceDiscovery rest;
 
     public abstract IdType getId();
