@@ -1,4 +1,4 @@
-package rs.pelotas.arch.filter;
+package rs.pelotas.arch.repository;
 
 import java.io.Serializable;
 

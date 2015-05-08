@@ -6,7 +6,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 import rs.pelotas.arch.entity.BaseEntity;
-import rs.pelotas.arch.filter.Filter;
 import rs.pelotas.arch.helper.Field;
 
 /**

@@ -1,4 +1,4 @@
-package rs.pelotas.arch.helper;
+package rs.pelotas.arch.resource;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import rs.pelotas.arch.enumeration.Method;
 import rs.pelotas.arch.enumeration.OrderBy;
 import rs.pelotas.arch.enumeration.Param;
+import rs.pelotas.arch.helper.Field;
 
 /**
  *

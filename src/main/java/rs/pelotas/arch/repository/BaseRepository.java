@@ -7,9 +7,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
-import rs.pelotas.arch.helper.Criteria;
 import rs.pelotas.arch.entity.BaseEntity;
-import rs.pelotas.arch.filter.Filter;
 import rs.pelotas.arch.helper.Field;
 import rs.pelotas.arch.helper.Reflection;
 

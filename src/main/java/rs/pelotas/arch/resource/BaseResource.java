@@ -1,7 +1,5 @@
 package rs.pelotas.arch.resource;
 
-import rs.pelotas.arch.helper.QueryString;
-import rs.pelotas.arch.helper.ResponseBuilder;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;

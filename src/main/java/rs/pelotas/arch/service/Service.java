@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import javax.validation.ConstraintViolationException;
 import rs.pelotas.arch.entity.BaseEntity;
-import rs.pelotas.arch.filter.Filter;
+import rs.pelotas.arch.repository.Filter;
 import rs.pelotas.arch.helper.Field;
 import rs.pelotas.arch.repository.Repository;
 

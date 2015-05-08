@@ -1,4 +1,4 @@
-package rs.pelotas.arch.helper;
+package rs.pelotas.arch.resource;
 
 import java.util.HashMap;
 import java.util.List;

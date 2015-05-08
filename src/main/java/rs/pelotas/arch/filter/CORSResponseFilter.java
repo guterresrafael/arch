@@ -1,4 +1,4 @@
-package rs.pelotas.arch.web;
+package rs.pelotas.arch.filter;
 
 import java.io.IOException;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -11,7 +11,7 @@ import javax.ws.rs.ext.Provider;
  * @author Rafael Guterres
  */
 @Provider
-public class CORSFilter implements ContainerResponseFilter {
+public class CORSResponseFilter implements ContainerResponseFilter {
 
     public static final String ACCESS_CONTROL_ALLOW_ORIGIN_KEY = "Access-Control-Allow-Origin";
     public static final String ACCESS_CONTROL_ALLOW_ORIGIN_VALUE = "*";

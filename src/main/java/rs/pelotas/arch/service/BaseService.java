@@ -9,7 +9,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import rs.pelotas.arch.entity.BaseEntity;
-import rs.pelotas.arch.filter.Filter;
+import rs.pelotas.arch.repository.Filter;
 import rs.pelotas.arch.helper.Field;
 
 /**

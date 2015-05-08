@@ -1,4 +1,4 @@
-package rs.pelotas.arch.annotation;
+package rs.pelotas.arch.repository;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

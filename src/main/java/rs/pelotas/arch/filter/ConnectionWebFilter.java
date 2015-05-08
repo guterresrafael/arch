@@ -1,4 +1,4 @@
-package rs.pelotas.arch.web;
+package rs.pelotas.arch.filter;
 
 import java.io.IOException;
 import javax.annotation.Resource;
@@ -16,7 +16,7 @@ import javax.transaction.UserTransaction;
  * @author Rafael Guterres
  */
 @WebFilter(urlPatterns = {"/*"})
-public class ConnectionFilter implements Filter {
+public class ConnectionWebFilter implements Filter {
 
     @Resource
     UserTransaction userTransaction;

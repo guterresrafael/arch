@@ -1,4 +1,4 @@
-package rs.pelotas.arch.helper;
+package rs.pelotas.arch.repository;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -7,8 +7,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import rs.pelotas.arch.annotation.CriteriaFilter;
-import rs.pelotas.arch.filter.Filter;
+import rs.pelotas.arch.helper.Reflection;
+import rs.pelotas.arch.repository.Filter;
 
 /**
  *

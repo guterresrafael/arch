@@ -16,7 +16,7 @@ public abstract class BaseEntity<IdType> implements Serializable {
     @XmlElementWrapper(name = "links")
     @XmlElement(name = "link")
     @Transient
-    private RESTServiceDiscovery rest;
+    RESTServiceDiscovery rest;
 
     public abstract IdType getId();
 
