@@ -1,6 +1,7 @@
 package rs.pelotas.arch.core;
 
 import java.util.logging.Logger;
+import javax.ws.rs.core.Application;
 import rs.pelotas.arch.batch.JobScheduler;
 
 /**
@@ -10,7 +11,7 @@ import rs.pelotas.arch.batch.JobScheduler;
  * 
  * @author Rafael Guterres
  */
-public abstract class BaseApplication extends javax.ws.rs.core.Application {
+public abstract class BaseApplication extends Application {
 
     public abstract JobScheduler getScheduler();
     
