@@ -2,6 +2,8 @@ package rs.pelotas.arch.repository;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -21,6 +23,14 @@ public abstract class BaseRepository<EntityType extends BaseEntity, IdType exten
            implements Repository<EntityType, IdType> {
     
     private final Class<EntityType> entityClass = Reflection.getGenericArgumentType(getClass());
+    
+    @Inject
+    EntityManager entityManager;
+
+    @Override
+    public EntityManager getEntityManager() {
+        return entityManager;
+    }
     
     @Override
     public EntityType load(IdType id) {
