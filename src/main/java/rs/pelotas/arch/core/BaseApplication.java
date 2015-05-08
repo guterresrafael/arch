@@ -10,7 +10,7 @@ import rs.pelotas.arch.batch.JobScheduler;
  * 
  * @author Rafael Guterres
  */
-public abstract class Application extends javax.ws.rs.core.Application {
+public abstract class BaseApplication extends javax.ws.rs.core.Application {
 
     public abstract JobScheduler getScheduler();
     

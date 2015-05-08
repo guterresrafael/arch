@@ -8,7 +8,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import rs.pelotas.arch.annotation.CriteriaFilter;
-import rs.pelotas.arch.filter.BaseFilter;
+import rs.pelotas.arch.filter.Filter;
 
 /**
  *
@@ -20,7 +20,7 @@ public class Criteria {
     private static final String LIKE_CRITERIA_VALUE = "%";
     
     public static void addWhere(CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery,
-                                Root root, BaseFilter filter) {
+                                Root root, Filter filter) {
         if (filter != null) {
             List<Predicate> predicates = new ArrayList<>();
             List<Field> fields = new ArrayList<>();

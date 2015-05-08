@@ -6,6 +6,6 @@ import java.io.Serializable;
  *
  * @author Rafael Guterres
  */
-public interface BaseFilter extends Serializable {
+public interface Filter extends Serializable {
 
 }
