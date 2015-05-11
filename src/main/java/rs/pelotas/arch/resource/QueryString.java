@@ -172,26 +172,21 @@ public class QueryString {
             }
             field.setName(fieldArray[0]);
             field.setValue(fieldArray[1]);
-        } else {
+        } else if (field.getValue().toString().contains(BETWEEN_OPERATOR)) {
             String[] fieldArray = null;
-            if (field.getValue().toString().contains(BETWEEN_OPERATOR)) {
-                field.setMethod(Method.BETWEEN);
-                fieldArray = field.getValue().toString().split(BETWEEN_REGEX);
-            }
+            field.setMethod(Method.BETWEEN);
+            fieldArray = field.getValue().toString().split(BETWEEN_REGEX);
             field.setValue(fieldArray[0]);
             field.setField(new Field(field.getName(), fieldArray[1]));
         }
     }
     
     private void defineFieldMethodWithLikeBased(Field field) {
-        if (field.getValue() != null ) {
-            String fieldValue = (String) field.getValue();
-            if (fieldValue.contains(LIKE_OPERATOR)) {
-                if (field.getMethod() != null && field.getMethod().equals(Method.NOT_EQUAL)) {
-                    field.setMethod(Method.NOT_LIKE);
-                } else {
-                    field.setMethod(Method.LIKE);
-                }
+        if (field.getValue() != null && field.getValue().toString().contains(LIKE_OPERATOR)) {
+            if (field.getMethod() != null && field.getMethod().equals(Method.NOT_EQUAL)) {
+                field.setMethod(Method.NOT_LIKE);
+            } else {
+                field.setMethod(Method.LIKE);
             }
         }
     }

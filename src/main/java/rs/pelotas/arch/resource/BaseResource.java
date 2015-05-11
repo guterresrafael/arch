@@ -12,6 +12,7 @@ import javax.validation.ConstraintViolationException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import rs.pelotas.arch.entity.BaseEntity;
+import rs.pelotas.arch.helper.FieldMap;
 import rs.pelotas.arch.helper.Reflection;
 
 /**
@@ -128,7 +129,7 @@ public abstract class BaseResource<EntityType extends BaseEntity, IdType extends
     private List<Map<String, Object>> createEntitiesMapListByQueryParams(List<EntityType> entities, QueryString queryString) throws IllegalArgumentException, IllegalAccessException {
         List<Map<String, Object>> entitiesMap = new ArrayList<>();
         for (EntityType entity : entities) {
-            Map<String, Object> entityMap = new HashMap<>();
+            Map<String, Object> entityMap = new FieldMap<>();
             List<Field> entityFields = new ArrayList<>();
             Reflection.getAllFields(entityFields, entity.getClass());
             for (String fieldParam : queryString.getFieldList()) {
