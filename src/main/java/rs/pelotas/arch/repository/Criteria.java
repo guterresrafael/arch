@@ -3,12 +3,12 @@ package rs.pelotas.arch.repository;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import rs.pelotas.arch.helper.Reflection;
-import rs.pelotas.arch.repository.Filter;
 
 /**
  *
@@ -20,7 +20,7 @@ public class Criteria {
     private static final String LIKE_CRITERIA_VALUE = "%";
     
     public static void addWhere(CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery,
-                                Root root, Filter filter) {
+                                Root root, Filter filter, Map<String, Object> parameters) {
         if (filter != null) {
             List<Predicate> predicates = new ArrayList<>();
             List<Field> fields = new ArrayList<>();
@@ -39,6 +39,7 @@ public class Criteria {
                     fieldFilter.setValue(fieldValue);
                     fieldFilter.setClazz(filter.getClass());
                     fieldFilter.setMethod(criteriaFilter.method());
+                    parameters.put(fieldFilter.getName(), fieldFilter.getValue());
                     Criteria.addPredicate(predicates, criteriaBuilder, root, fieldFilter);
                 }
             }
@@ -49,10 +50,12 @@ public class Criteria {
     }
 
     public static void addWhere(CriteriaBuilder criteriaBuilder, CriteriaQuery<?> criteriaQuery,
-                                Root<?> root, List<rs.pelotas.arch.helper.Field> filterList) {
+                                Root<?> root, List<rs.pelotas.arch.helper.Field> filterList,
+                                Map<String, Object> parameters) {
         if (filterList != null && !filterList.isEmpty()) {
             List<Predicate> predicates = new ArrayList<>();
             for (rs.pelotas.arch.helper.Field field : filterList) {
+                parameters.put(field.getName(), field.getValue());
                 Criteria.addPredicate(predicates, criteriaBuilder, root, field);
             }
             if (!predicates.isEmpty()) {
@@ -84,7 +87,7 @@ public class Criteria {
                 predicates.add(criteriaBuilder.notLike(root.get(field.getName()), addLikeChar(field.getValue())));
                 break;
         }
-    }    
+    }
     
     private static void addPredicateWithoutValueBased(List<Predicate> predicates, CriteriaBuilder criteriaBuilder,
                                                       Root root, rs.pelotas.arch.helper.Field field) {
@@ -124,6 +127,7 @@ public class Criteria {
                 break;
             case BETWEEN:
                 predicates.add(criteriaBuilder.between(root.get(field.getName()), field.getValueComparable(), field.getField().getValueComparable()));
+                break;
         }
     }
 

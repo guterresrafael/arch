@@ -1,9 +1,12 @@
 package rs.pelotas.arch.repository;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -68,7 +71,8 @@ public abstract class BaseRepository<EntityType extends BaseEntity, IdType exten
         CriteriaQuery<EntityType> criteriaQuery = criteriaBuilder.createQuery(entityClass);
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(root);
-        return getResultList(criteriaQuery);
+        TypedQuery<EntityType> query = getEntityManager().createQuery(criteriaQuery);
+        return getResultList(query);
     }
 
     @Override
@@ -76,7 +80,8 @@ public abstract class BaseRepository<EntityType extends BaseEntity, IdType exten
         CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         criteriaQuery.select(criteriaBuilder.count(criteriaQuery.from(entityClass)));
-        return getCount(criteriaQuery);
+        TypedQuery<Long> query = getEntityManager().createQuery(criteriaQuery);
+        return getCount(query);
     }
    
     @Override
@@ -85,18 +90,24 @@ public abstract class BaseRepository<EntityType extends BaseEntity, IdType exten
         CriteriaQuery<EntityType> criteriaQuery = criteriaBuilder.createQuery(entityClass);
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(root);
-        Criteria.addWhere(criteriaBuilder, criteriaQuery, root, filter);
-        return getResultList(criteriaQuery);
+        Map<String, Object> parameters = new HashMap<>();
+        Criteria.addWhere(criteriaBuilder, criteriaQuery, root, filter, parameters);
+        TypedQuery<EntityType> query = getEntityManager().createQuery(criteriaQuery);
+        addQueryParameters(query, parameters);
+        return getResultList(query);
     }
-    
+
     @Override
     public Long countByFilter(Filter filter) {
         CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(criteriaBuilder.count(root));
-        Criteria.addWhere(criteriaBuilder, criteriaQuery, root, filter);
-        return getCount(criteriaQuery);
+        Map<String, Object> parameters = new HashMap<>();
+        Criteria.addWhere(criteriaBuilder, criteriaQuery, root, filter, parameters);
+        TypedQuery<Long> query = getEntityManager().createQuery(criteriaQuery);
+        addQueryParameters(query, parameters);
+        return getCount(query);
     }
     
     @Override
@@ -105,7 +116,8 @@ public abstract class BaseRepository<EntityType extends BaseEntity, IdType exten
         CriteriaQuery<EntityType> criteriaQuery = criteriaBuilder.createQuery(entityClass);
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(root);
-        return getResultList(criteriaQuery, offset, limit);
+        TypedQuery<EntityType> query = getEntityManager().createQuery(criteriaQuery);
+        return getResultList(query, offset, limit);
     }
     
     @Override
@@ -113,7 +125,8 @@ public abstract class BaseRepository<EntityType extends BaseEntity, IdType exten
         CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         criteriaQuery.select(criteriaBuilder.count(criteriaQuery.from(entityClass)));
-        return getCount(criteriaQuery, offset, limit);
+        TypedQuery<Long> query = getEntityManager().createQuery(criteriaQuery);
+        return getCount(query, offset, limit);
     }
 
     @Override
@@ -122,8 +135,11 @@ public abstract class BaseRepository<EntityType extends BaseEntity, IdType exten
         CriteriaQuery<EntityType> criteriaQuery = criteriaBuilder.createQuery(entityClass);
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(root);
-        Criteria.addWhere(criteriaBuilder, criteriaQuery, root, filter);
-        return getResultList(criteriaQuery, offset, limit);
+        Map<String, Object> parameters = new HashMap<>();
+        Criteria.addWhere(criteriaBuilder, criteriaQuery, root, filter, parameters);
+        TypedQuery<EntityType> query = getEntityManager().createQuery(criteriaQuery);
+        addQueryParameters(query, parameters);
+        return getResultList(query, offset, limit);
     }
 
     @Override
@@ -132,8 +148,10 @@ public abstract class BaseRepository<EntityType extends BaseEntity, IdType exten
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(criteriaBuilder.count(root));
-        Criteria.addWhere(criteriaBuilder, criteriaQuery, root, filter);
-        return getCount(criteriaQuery, offset, limit);
+        Map<String, Object> parameters = new HashMap<>();
+        Criteria.addWhere(criteriaBuilder, criteriaQuery, root, filter, parameters);
+        TypedQuery<Long> query = getEntityManager().createQuery(criteriaQuery);
+        return getCount(query, offset, limit);
     }
 
     @Override
@@ -143,9 +161,11 @@ public abstract class BaseRepository<EntityType extends BaseEntity, IdType exten
         CriteriaQuery<EntityType> criteriaQuery = criteriaBuilder.createQuery(entityClass);
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(root);
-        Criteria.addWhere(criteriaBuilder, criteriaQuery, root, filterList);
+        Map<String, Object> parameters = new HashMap<>();
+        Criteria.addWhere(criteriaBuilder, criteriaQuery, root, filterList, parameters);
         Criteria.addOrderBy(criteriaBuilder, criteriaQuery, root, sortList);
-        return getResultList(criteriaQuery, offset, limit);
+        TypedQuery<EntityType> query = getEntityManager().createQuery(criteriaQuery);
+        return getResultList(query, offset, limit);
     }
 
     @Override
@@ -154,35 +174,41 @@ public abstract class BaseRepository<EntityType extends BaseEntity, IdType exten
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<EntityType> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(criteriaBuilder.count(root));
-        Criteria.addWhere(criteriaBuilder, criteriaQuery, root, fieldList);
-        return getCount(criteriaQuery, offset, limit);
+        Map<String, Object> parameters = new HashMap<>();
+        Criteria.addWhere(criteriaBuilder, criteriaQuery, root, fieldList, parameters);
+        TypedQuery<Long> query = getEntityManager().createQuery(criteriaQuery);
+        return getCount(query, offset, limit);
     }
 
-    private List<EntityType> getResultList(CriteriaQuery<?> criteriaQuery) {
-        TypedQuery typedQuery = getEntityManager().createQuery(criteriaQuery);
-        List<EntityType> entities = typedQuery.getResultList();
+    private void addQueryParameters(Query query, Map<String, Object> parameters) {
+        if (parameters != null && !parameters.isEmpty()) {
+            for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+                query.setParameter(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+    
+    private List<EntityType> getResultList(Query query) {
+        List<EntityType> entities = query.getResultList();
         return entities;
     }
     
-    private List<EntityType> getResultList(CriteriaQuery<?> criteriaQuery, Integer offset, Integer limit) {
-        TypedQuery typedQuery = getEntityManager().createQuery(criteriaQuery);
-        List<EntityType> entities = typedQuery.setFirstResult(offset)
-                                              .setMaxResults(limit)
-                                              .getResultList();
+    private List<EntityType> getResultList(Query query, Integer offset, Integer limit) {
+        List<EntityType> entities = query.setFirstResult(offset)
+                                         .setMaxResults(limit)
+                                         .getResultList();
         return entities;
     }
     
-    private Long getCount(CriteriaQuery<Long> criteriaQuery) {
-        TypedQuery<Long> typedQuery = getEntityManager().createQuery(criteriaQuery);
-        Long count = typedQuery.getSingleResult();
+    private Long getCount(TypedQuery<Long> query) {
+        Long count = query.getSingleResult();
         return count;
     }
     
-    private Long getCount(CriteriaQuery<Long> criteriaQuery, Integer offset, Integer limit) {
-        TypedQuery<Long> typedQuery = getEntityManager().createQuery(criteriaQuery);
-        Long count = typedQuery.setFirstResult(offset)
-                               .setMaxResults(limit)
-                               .getSingleResult();
+    private Long getCount(TypedQuery<Long> query, Integer offset, Integer limit) {
+        Long count = query.setFirstResult(offset)
+                          .setMaxResults(limit)
+                          .getSingleResult();
         return count;
     }
     
