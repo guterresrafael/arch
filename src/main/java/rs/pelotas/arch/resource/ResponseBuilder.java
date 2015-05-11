@@ -1,9 +1,13 @@
 package rs.pelotas.arch.resource;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.MediaType;
@@ -100,5 +104,13 @@ public class ResponseBuilder {
     
     public static Response notImplemented() {
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    }
+    
+    public static Response redirect(String uri) {
+        try {
+            return Response.seeOther(new URI(uri)).build();
+        } catch (URISyntaxException ex) {
+            return null;
+        }
     }
 }
