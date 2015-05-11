@@ -22,6 +22,8 @@ import rs.pelotas.arch.helper.Reflection;
 public abstract class BaseRepository<EntityType extends BaseEntity, IdType extends Serializable> 
            implements Repository<EntityType, IdType> {
     
+    private static final long serialVersionUID = 1946014114445975865L;
+    
     private final Class<EntityType> entityClass = Reflection.getGenericArgumentType(getClass());
     
     @Inject

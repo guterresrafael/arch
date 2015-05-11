@@ -75,7 +75,7 @@ public abstract class BaseResource<EntityType extends BaseEntity, IdType extends
             } else {
                 return entities;
             }
-        } catch (Exception e) {
+        } catch (IllegalArgumentException | IllegalAccessException e) {
             throw new WebApplicationException(ResponseBuilder.badRequest(e));
         }
     }
