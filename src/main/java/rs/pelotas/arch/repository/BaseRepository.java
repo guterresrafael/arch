@@ -25,11 +25,11 @@ import rs.pelotas.arch.helper.Reflection;
  */
 public abstract class BaseRepository<EntityType extends BaseEntity, IdType extends Serializable> 
            implements Repository<EntityType, IdType> {
-    
+
     private static final long serialVersionUID = 1946014114445975865L;
-    
+
     private final Class<EntityType> entityClass = Reflection.getGenericArgumentType(getClass());
-    
+
     @Inject
     EntityManager entityManager;
 
@@ -37,7 +37,7 @@ public abstract class BaseRepository<EntityType extends BaseEntity, IdType exten
     public EntityManager getEntityManager() {
         return entityManager;
     }
-    
+
     @Override
     public EntityType load(IdType id) {
         EntityType entity = getEntityManager().find(entityClass, id);
@@ -83,7 +83,7 @@ public abstract class BaseRepository<EntityType extends BaseEntity, IdType exten
         TypedQuery<Long> query = getEntityManager().createQuery(criteriaQuery);
         return getCount(query);
     }
-   
+
     @Override
     public List<EntityType> findByFilter(Filter filter) {
         CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
@@ -109,7 +109,7 @@ public abstract class BaseRepository<EntityType extends BaseEntity, IdType exten
         addQueryParameters(query, parameters);
         return getCount(query);
     }
-    
+
     @Override
     public List<EntityType> findAllWithPagination(Integer offset, Integer limit) {
         CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
@@ -119,7 +119,7 @@ public abstract class BaseRepository<EntityType extends BaseEntity, IdType exten
         TypedQuery<EntityType> query = getEntityManager().createQuery(criteriaQuery);
         return getResultList(query, offset, limit);
     }
-    
+
     @Override
     public Long countAllWithPagination(Integer offset, Integer limit) {
         CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
@@ -187,31 +187,31 @@ public abstract class BaseRepository<EntityType extends BaseEntity, IdType exten
             }
         }
     }
-    
+
     private List<EntityType> getResultList(Query query) {
         List<EntityType> entities = query.getResultList();
         return entities;
     }
-    
+
     private List<EntityType> getResultList(Query query, Integer offset, Integer limit) {
         List<EntityType> entities = query.setFirstResult(offset)
                                          .setMaxResults(limit)
                                          .getResultList();
         return entities;
     }
-    
+
     private Long getCount(TypedQuery<Long> query) {
         Long count = query.getSingleResult();
         return count;
     }
-    
+
     private Long getCount(TypedQuery<Long> query, Integer offset, Integer limit) {
         Long count = query.setFirstResult(offset)
                           .setMaxResults(limit)
                           .getSingleResult();
         return count;
     }
-    
+
     @Override
     public Path getPath(Root root, String strPath) {
         Path path = root;
