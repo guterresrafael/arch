@@ -9,6 +9,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 import rs.pelotas.arch.entity.BaseEntity;
 import rs.pelotas.arch.helper.Field;
 import rs.pelotas.arch.helper.Reflection;
@@ -40,19 +41,25 @@ public abstract class BaseRepository<EntityType extends BaseEntity, IdType exten
         return entity;
     }
 
+    @Transactional
     @Override
     public void persist(EntityType entity) {
         getEntityManager().persist(entity);
     }
 
+    @Transactional
     @Override
     public EntityType merge(EntityType entity) {
         return (EntityType) getEntityManager().merge(entity);
     }
 
+    @Transactional
     @Override
-    public void remove(IdType entity) {
-        getEntityManager().remove(entity);
+    public void remove(IdType id) {
+        EntityType entity = load(id);
+        if (entity != null) {
+            getEntityManager().remove(entity);
+        }
     }
 
     @Override

@@ -1,7 +1,8 @@
 package rs.pelotas.arch.entity;
 
-import java.io.Serializable;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import org.jboss.resteasy.links.RESTServiceDiscovery;
@@ -11,8 +12,9 @@ import org.jboss.resteasy.links.RESTServiceDiscovery;
  * @author Rafael Guterres
  * @param <IdType>
  */
-public abstract class BaseEntity<IdType> implements Serializable {
-    
+@XmlAccessorType(XmlAccessType.NONE)
+public abstract class BaseEntity<IdType> {
+
     @XmlElementWrapper(name = "links")
     @XmlElement(name = "link")
     @Transient
