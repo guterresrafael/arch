@@ -28,7 +28,7 @@ public class ResponseBuilder {
     }
 
     public static Response ok(List<Object> entities) {
-        return Response.ok(entities, MediaType.APPLICATION_JSON).build();
+        return Response.ok(entities).build();
     }
     
     public static Response created() {
