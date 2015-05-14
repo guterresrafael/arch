@@ -1,7 +1,7 @@
 package rs.pelotas.arch.resource;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 import rs.pelotas.arch.entity.BaseEntity;
@@ -21,7 +21,7 @@ public interface Resource<EntityType extends BaseEntity, IdType extends Serializ
     
     Integer getLimitDefaultValue();
     
-    Collection<EntityType> getEntities(HttpServletRequest request);    
+    List<EntityType> getEntities(HttpServletRequest request);    
     
     Response postEntity(EntityType entity);
     

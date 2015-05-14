@@ -3,16 +3,16 @@ package rs.pelotas.arch.resource;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import rs.pelotas.arch.entity.BaseEntity;
-import rs.pelotas.arch.helper.FieldMap;
 import rs.pelotas.arch.helper.Reflection;
 
 /**
@@ -23,6 +23,9 @@ import rs.pelotas.arch.helper.Reflection;
  */
 public abstract class BaseResource<EntityType extends BaseEntity, IdType extends Serializable>
            implements Resource<EntityType, IdType> {
+
+    private static final long serialVersionUID = 877833877085359482L;
+    private final Class<EntityType> entityClass = Reflection.getGenericArgumentType(getClass());
 
     private static final Integer PARAM_OFFSET_DEFAULT_VALUE = 0;
     private static final Integer PARAM_LIMIT_DEFAULT_VALUE = 20;
@@ -38,9 +41,9 @@ public abstract class BaseResource<EntityType extends BaseEntity, IdType extends
     }
 
     @Override
-    public Collection<EntityType> getEntities(HttpServletRequest request) {
+    public List<EntityType> getEntities(HttpServletRequest request) {
         try {
-            List entities;
+            List<EntityType> entities;
             QueryString queryString = new QueryString(request);
             
             //Pagination
@@ -71,12 +74,11 @@ public abstract class BaseResource<EntityType extends BaseEntity, IdType extends
             
             //Custom Fields
             if (!queryString.getFieldList().isEmpty()) {
-                entities = createEntitiesMapListByQueryParams(entities, queryString);
-                return entities;
+                return getEntitiesFromQueryStringCustomFilters(entities, queryString);
             } else {
                 return entities;
             }
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (IllegalArgumentException e) {
             throw new WebApplicationException(ResponseBuilder.badRequest(e));
         }
     }
@@ -126,10 +128,20 @@ public abstract class BaseResource<EntityType extends BaseEntity, IdType extends
         return ResponseBuilder.deleted();
     }
 
-    private List<Map<String, Object>> createEntitiesMapListByQueryParams(List<EntityType> entities, QueryString queryString) throws IllegalArgumentException, IllegalAccessException {
+    private List<EntityType> getEntitiesFromQueryStringCustomFilters(List<EntityType> entities, QueryString queryString) {
+        try {
+            List<Map<String, Object>> entitiesMap = getEntitiesMapList(entities, queryString);
+            List<EntityType> entitiesCustomFields = getEntitiesCustomFields(entitiesMap);
+            return entitiesCustomFields;
+        } catch (IllegalArgumentException | IllegalAccessException ex) {
+            return null;
+        }
+    }
+    
+    private List<Map<String, Object>> getEntitiesMapList(List<EntityType> entities, QueryString queryString) throws IllegalArgumentException, IllegalAccessException {
         List<Map<String, Object>> entitiesMap = new ArrayList<>();
         for (EntityType entity : entities) {
-            Map<String, Object> entityMap = new FieldMap<>();
+            Map<String, Object> entityMap = new HashMap<>();
             List<Field> entityFields = new ArrayList<>();
             Reflection.getAllFields(entityFields, entity.getClass());
             for (String fieldParam : queryString.getFieldList()) {
@@ -144,5 +156,25 @@ public abstract class BaseResource<EntityType extends BaseEntity, IdType extends
             entitiesMap.add(entityMap);
         }
         return entitiesMap;
+    }
+    
+    private List<EntityType> getEntitiesCustomFields(List<Map<String, Object>> entitiesMap) throws IllegalArgumentException, IllegalAccessException {
+        List<EntityType> entities = new ArrayList<>();
+        for (Map<String, Object> entityMap : entitiesMap) {
+            EntityType entity = Reflection.instantiateClass(entityClass);
+            List<Field> entityFields = new ArrayList<>();
+            Reflection.getAllFields(entityFields, entity.getClass());
+            for (Map.Entry<String, Object> entry : entityMap.entrySet()) {
+                for (Field entityField : entityFields) {
+                    entityField.setAccessible(true);
+                    if (entityField.getName().equals(entry.getKey())) {
+                        entityField.set(entity, entry.getValue());
+                        break;
+                    }
+                }
+            }
+            entities.add(entity);
+        }
+        return entities;
     }
 }

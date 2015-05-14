@@ -170,8 +170,10 @@ public class QueryString {
                 field.setMethod(Method.LESS);
                 fieldArray = field.getName().split(LESS_OPERATOR);
             }
-            field.setName(fieldArray[0]);
-            field.setValue(fieldArray[1]);
+            if (fieldArray != null && fieldArray.length > 0) {
+                field.setName(fieldArray[0]);
+                field.setValue(fieldArray[1]);
+            }
         } else if (field.getValue().toString().contains(BETWEEN_OPERATOR)) {
             String[] fieldArray = null;
             field.setMethod(Method.BETWEEN);
