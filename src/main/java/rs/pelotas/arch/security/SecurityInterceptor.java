@@ -46,8 +46,8 @@ public class SecurityInterceptor implements ContainerRequestFilter {
             
             //Authorization
             AuthorizationBasic auth = new AuthorizationBasic(requestContext);
-            if (auth.getLogin() == null || auth.getPassword() == null ||
-                !isAuthenticatedUser(auth.getLogin(), auth.getPassword())) {
+            if (auth.getUsername() == null || auth.getPassword() == null ||
+                !isAuthenticatedUser(auth.getUsername(), auth.getPassword())) {
                 requestContext.abortWith(HTTP_401_UNAUTHORIZED);
                 return;
             }
@@ -57,7 +57,7 @@ public class SecurityInterceptor implements ContainerRequestFilter {
                 RolesAllowed rolesAnnotation = method.getAnnotation(RolesAllowed.class);
                 Set<String> roles = new HashSet<>(Arrays.asList(rolesAnnotation.value()));
                 
-                if (!isAuthorizedUser(auth.getLogin(), roles)) {
+                if (!isAuthorizedUser(auth.getUsername(), roles)) {
                     requestContext.abortWith(HTTP_403_FORBIDDEN);
                 }
             }

@@ -18,7 +18,7 @@ public class AuthorizationBasic {
     public static final String AUTHORIZATION_REGEX = AUTHORIZATION_SCHEME + " ";
     public static final String AUTHORIZATION_REPLACEMENT = "";
 
-    private String login;
+    private String username;
     private String password;
 
     public AuthorizationBasic(ContainerRequestContext requestContext) {
@@ -35,12 +35,12 @@ public class AuthorizationBasic {
             return;
         }
         final StringTokenizer tokenizer = new StringTokenizer(usernameAndPassword, ":");
-        this.login = tokenizer.nextToken();
+        this.username = tokenizer.nextToken();
         this.password = tokenizer.nextToken();
     }
 
-    public String getLogin() {
-        return login;
+    public String getUsername() {
+        return username;
     }
 
     public String getPassword() {
