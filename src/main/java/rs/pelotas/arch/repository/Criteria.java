@@ -8,6 +8,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import rs.pelotas.arch.enumeration.Method;
 import rs.pelotas.arch.helper.Reflection;
 
 /**
@@ -26,26 +27,25 @@ public class Criteria {
             List<Field> fields = new ArrayList<>();
             Reflection.getAllFields(fields, filter.getClass());
             for (Field field : fields) {
-                field.setAccessible(true);
-                Object fieldValue = null;
                 try {
-                    fieldValue = field.get(filter);
-                } catch (IllegalArgumentException | IllegalAccessException ex) {
-                }
-                if (fieldValue != null && field.isAnnotationPresent(CriteriaFilter.class)) {
-                    CriteriaFilter criteriaFilter = field.getAnnotation(CriteriaFilter.class);
+                    field.setAccessible(true);
+                    Object fieldValue = field.get(filter);
                     rs.pelotas.arch.helper.Field fieldFilter = new rs.pelotas.arch.helper.Field();
                     fieldFilter.setName(field.getName());
                     fieldFilter.setValue(fieldValue);
                     fieldFilter.setClazz(filter.getClass());
-                    fieldFilter.setMethod(criteriaFilter.method());
+                    if (field.isAnnotationPresent(CriteriaFilter.class)) {
+                        CriteriaFilter criteriaFilter = field.getAnnotation(CriteriaFilter.class);
+                        fieldFilter.setMethod(criteriaFilter.method());
+                    } else {
+                        fieldFilter.setMethod(Method.EQUAL);
+                    }
                     parameters.put(fieldFilter.getName(), fieldFilter.getValue());
                     Criteria.addPredicate(predicates, criteriaBuilder, root, fieldFilter);
+                } catch (IllegalArgumentException | IllegalAccessException | NullPointerException e) {
                 }
             }
-            if (!predicates.isEmpty()) {
-                criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[] {})));
-            }
+            addPredicates(criteriaBuilder, criteriaQuery, predicates);
         }
     }
 
@@ -58,9 +58,7 @@ public class Criteria {
                 parameters.put(field.getName(), field.getValue());
                 Criteria.addPredicate(predicates, criteriaBuilder, root, field);
             }
-            if (!predicates.isEmpty()) {
-                criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[] {})));
-            }
+            addPredicates(criteriaBuilder, criteriaQuery, predicates);
         }
     }
     
@@ -134,6 +132,12 @@ public class Criteria {
     public static void addOrderBy (CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery,
                                    Root root, List<rs.pelotas.arch.helper.Field> sortList) {
         //TODO: implementar suporte a ordenacao
+    }
+    
+    private static void addPredicates(CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery, List<Predicate> predicates) {
+        if (!predicates.isEmpty()) {
+            criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[] {})));
+        }
     }
     
     private static String addLikeChar(Object value) {

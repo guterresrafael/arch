@@ -183,7 +183,7 @@ public abstract class BaseRepository<EntityType extends BaseEntity, IdType exten
     private void addQueryParameters(Query query, Map<String, Object> parameters) {
         if (parameters != null && !parameters.isEmpty()) {
             for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-                query.setParameter(entry.getKey(), entry.getValue());
+                //query.setParameter(entry.getKey(), entry.getValue());
             }
         }
     }
