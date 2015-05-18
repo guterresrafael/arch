@@ -20,6 +20,7 @@ public class AuthorizationBasic {
     public static final String AUTHORIZATION_REGEX = AUTHORIZATION_SCHEME + " ";
     public static final String AUTHORIZATION_REPLACEMENT = "";
 
+    private Long id;
     private String username;
     private String password;
     private Set<String> roles;
@@ -41,6 +42,14 @@ public class AuthorizationBasic {
         this.username = tokenizer.nextToken();
         this.password = tokenizer.nextToken();
         this.roles = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getUsername() {
