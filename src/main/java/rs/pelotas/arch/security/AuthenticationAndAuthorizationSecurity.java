@@ -8,8 +8,8 @@ import java.util.Set;
  * @author Rafael Guterres
  */
 public interface AuthenticationAndAuthorizationSecurity extends Serializable {
-    
-    public boolean isAuthenticatedUser(String login, String password);
-    
-    public boolean isAuthorizedUser(String login, Set<String> roles);
+
+    public boolean isAuthenticatedUser(AuthorizationBasic authorization);
+
+    public boolean isAuthorizedUser(AuthorizationBasic authorization, Set<String> roles);
 }

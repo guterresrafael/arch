@@ -2,7 +2,9 @@ package rs.pelotas.arch.security;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.MultivaluedMap;
 import org.jboss.resteasy.util.Base64;
@@ -20,6 +22,7 @@ public class AuthorizationBasic {
 
     private String username;
     private String password;
+    private Set<String> roles;
 
     public AuthorizationBasic(ContainerRequestContext requestContext) {
         final MultivaluedMap<String, String> headers = requestContext.getHeaders();
@@ -37,6 +40,7 @@ public class AuthorizationBasic {
         final StringTokenizer tokenizer = new StringTokenizer(usernameAndPassword, ":");
         this.username = tokenizer.nextToken();
         this.password = tokenizer.nextToken();
+        this.roles = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
     }
 
     public String getUsername() {
@@ -45,5 +49,13 @@ public class AuthorizationBasic {
 
     public String getPassword() {
         return password;
+    }
+
+    public Set<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
     }
 }

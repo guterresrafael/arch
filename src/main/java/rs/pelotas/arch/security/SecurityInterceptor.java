@@ -45,9 +45,9 @@ public class SecurityInterceptor implements ContainerRequestFilter {
             }
             
             //Authorization
-            AuthorizationBasic auth = new AuthorizationBasic(requestContext);
-            if (auth.getUsername() == null || auth.getPassword() == null ||
-                !isAuthenticatedUser(auth.getUsername(), auth.getPassword())) {
+            AuthorizationBasic authorization = new AuthorizationBasic(requestContext);
+            if (authorization.getUsername() == null || authorization.getPassword() == null ||
+                !isAuthenticatedUser(authorization)) {
                 requestContext.abortWith(HTTP_401_UNAUTHORIZED);
                 return;
             }
@@ -56,19 +56,21 @@ public class SecurityInterceptor implements ContainerRequestFilter {
             if (method.isAnnotationPresent(RolesAllowed.class)) {
                 RolesAllowed rolesAnnotation = method.getAnnotation(RolesAllowed.class);
                 Set<String> roles = new HashSet<>(Arrays.asList(rolesAnnotation.value()));
-                
-                if (!isAuthorizedUser(auth.getUsername(), roles)) {
+                if (!isAuthorizedUser(authorization, roles)) {
                     requestContext.abortWith(HTTP_403_FORBIDDEN);
                 }
             }
+            
+            //Add Authorization to Context
+            requestContext.setProperty(AuthorizationBasic.AUTHORIZATION_PROPERTY, authorization);
         }
     }
     
-    private boolean isAuthenticatedUser(final String login, final String password) {
-        return authSecurity.isAuthenticatedUser(login, password);
+    private boolean isAuthenticatedUser(AuthorizationBasic authorization) {
+        return authSecurity.isAuthenticatedUser(authorization);
     }
     
-    private boolean isAuthorizedUser(final String login, final Set<String> roles) {
-        return authSecurity.isAuthorizedUser(login, roles);
+    private boolean isAuthorizedUser(AuthorizationBasic authorization, Set<String> roles) {
+        return authSecurity.isAuthorizedUser(authorization, roles);
     }
 }
