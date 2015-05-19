@@ -1,5 +1,6 @@
 package rs.pelotas.arch.helper;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -10,7 +11,9 @@ import rs.pelotas.arch.enumeration.OrderBy;
  *
  * @author Rafael Guterres
  */
-public class Field {
+public class Field implements Serializable {
+
+    private static final long serialVersionUID = 1473768917303205143L;
 
     private static final String DATE_SEPARATOR_CHARACTER = "-";
     

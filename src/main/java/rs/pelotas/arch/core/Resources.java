@@ -1,5 +1,6 @@
 package rs.pelotas.arch.core;
 
+import java.io.Serializable;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedScheduledExecutorService;
@@ -12,7 +13,9 @@ import javax.persistence.PersistenceContext;
  * 
  * @author Rafael Guterres
  */
-public class Resources {
+public class Resources implements Serializable {
+
+    private static final long serialVersionUID = -5306963189660774964L;
 
     @PersistenceContext
     EntityManager entityManager;

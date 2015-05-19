@@ -1,5 +1,6 @@
 package rs.pelotas.arch.helper;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +10,10 @@ import java.util.Map;
  *
  * @author Rafael Guterres
  */
-public class Assembler {
-    
+public class Assembler implements Serializable {
+
+    private static final long serialVersionUID = -2126578828818584021L;
+
     public static void assembler(Object objectFrom, Object objectTo) {
         try {
             List<Field> fieldsFrom = new ArrayList<>();

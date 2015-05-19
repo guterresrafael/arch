@@ -2,6 +2,7 @@ package rs.pelotas.arch.helper;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -17,7 +18,9 @@ import java.util.List;
  *
  * @author Rafael Guterres
  */
-public class Reflection {
+public class Reflection implements Serializable {
+
+    private static final long serialVersionUID = -7417663509020364988L;
 
     private static final String RAWTYPES = "rawtypes";
 

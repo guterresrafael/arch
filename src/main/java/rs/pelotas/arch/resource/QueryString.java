@@ -1,5 +1,6 @@
 package rs.pelotas.arch.resource;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -14,8 +15,10 @@ import rs.pelotas.arch.helper.Field;
  *
  * @author Rafael Guterres
  */
-public class QueryString {
-        
+public class QueryString implements Serializable {
+    
+    private static final long serialVersionUID = -756050251522896230L;
+
     private static final String DELIMITER_PARAM_VALUE = ",";
     private static final String ORDERBY_ASC_OPERATOR = "+";
     private static final String ORDERBY_DESC_OPERATOR = "-";

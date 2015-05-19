@@ -1,6 +1,7 @@
 package rs.pelotas.arch.security;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -13,7 +14,9 @@ import org.jboss.resteasy.util.Base64;
  *
  * @author Rafael Guterres
  */
-public class AuthorizationBasic {
+public class AuthorizationBasic implements Serializable {
+
+    private static final long serialVersionUID = 5670883358002212562L;
 
     public static final String AUTHORIZATION_PROPERTY = "Authorization";
     public static final String AUTHORIZATION_SCHEME = "Basic";

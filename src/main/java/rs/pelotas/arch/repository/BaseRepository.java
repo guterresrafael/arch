@@ -23,8 +23,7 @@ import rs.pelotas.arch.helper.Reflection;
  * @param <T>
  * @param <I>
  */
-public abstract class BaseRepository<T extends BaseEntity, I extends Serializable> 
-           implements Repository<T, I> {
+public abstract class BaseRepository<T extends BaseEntity, I extends Serializable> implements Repository<T, I> {
 
     private static final long serialVersionUID = 1946014114445975865L;
 

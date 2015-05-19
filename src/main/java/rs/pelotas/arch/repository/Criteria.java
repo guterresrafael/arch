@@ -1,5 +1,6 @@
 package rs.pelotas.arch.repository;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +16,10 @@ import rs.pelotas.arch.helper.Reflection;
  *
  * @author Rafael Guterres
  */
-public class Criteria {
-    
+public class Criteria implements Serializable {
+
+    private static final long serialVersionUID = -4367708806996213062L;
+
     private static final String LIKE_PARAM_VALUE = "*";
     private static final String LIKE_CRITERIA_VALUE = "%";
     

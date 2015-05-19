@@ -14,7 +14,7 @@ import rs.pelotas.arch.repository.Repository;
  * @param <T>
  * @param <I>
  */
-public interface Service<T extends BaseEntity, I extends Serializable> {
+public interface Service<T extends BaseEntity, I extends Serializable> extends Serializable {
     
     Repository<T, I> getRepository();
 

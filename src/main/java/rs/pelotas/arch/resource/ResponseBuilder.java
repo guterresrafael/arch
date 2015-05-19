@@ -1,5 +1,6 @@
 package rs.pelotas.arch.resource;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -14,8 +15,10 @@ import javax.ws.rs.core.Response;
  *
  * @author Rafael Guterres
  */
-public class ResponseBuilder {
-    
+public class ResponseBuilder implements Serializable {
+
+    private static final long serialVersionUID = -4360335602897527345L;
+
     public static Response ok() {
         return Response.status(Response.Status.OK).build();
     }

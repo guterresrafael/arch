@@ -18,8 +18,9 @@ import rs.pelotas.arch.helper.Field;
  * @param <T>
  * @param <I>
  */
-public abstract class BaseService<T extends BaseEntity, I extends Serializable>
-           implements Service<T, I> {
+public abstract class BaseService<T extends BaseEntity, I extends Serializable> implements Service<T, I> {
+
+    private static final long serialVersionUID = -6857150974317994345L;
 
     @Inject
     Validator validator;

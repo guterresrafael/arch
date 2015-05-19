@@ -19,10 +19,10 @@ import rs.pelotas.arch.helper.Reflection;
  * @param <T>
  * @param <I>
  */
-public abstract class BaseResource<T extends BaseEntity, I extends Serializable>
-           implements Resource<T, I> {
+public abstract class BaseResource<T extends BaseEntity, I extends Serializable> implements Resource<T, I> {
 
     private static final long serialVersionUID = 877833877085359482L;
+
     private final Class<T> entityClass = Reflection.getGenericArgumentType(getClass());
 
     private static final Integer PARAM_OFFSET_DEFAULT_VALUE = 0;

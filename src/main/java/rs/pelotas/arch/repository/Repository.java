@@ -14,8 +14,7 @@ import rs.pelotas.arch.helper.Field;
  * @param <T>
  * @param <I>
  */
-public interface Repository<T extends BaseEntity, I extends Serializable> 
-         extends Serializable {
+public interface Repository<T extends BaseEntity, I extends Serializable> extends Serializable {
 
     EntityManager getEntityManager();
 
