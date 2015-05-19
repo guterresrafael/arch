@@ -46,60 +46,58 @@ public abstract class BaseService<T extends BaseEntity, I extends Serializable> 
     }
 
     @Override
-    public List<T> findAll() {
-        return getRepository().findAll();
+    public List<T> find() {
+        return getRepository().find();
     }
     
     @Override
-    public Long countAll() {
-        return getRepository().countAll();
-    }
-
-    @Override
-    public List<T> findByFilter(Filter filter) {
-        return getRepository().findByFilter(filter);
-    }
-
-    @Override
-    public Long countByFilter(Filter filter) {
-        return getRepository().countByFilter(filter);
-    }
-
-    
-    @Override
-    public List<T> findAllWithPagination(Integer offset, Integer limit) {
-        return getRepository().findAllWithPagination(offset, limit);
-    }
-
-    @Override
-    public Long countAllWithPagination(Integer offset, Integer limit) {
-        return getRepository().countAllWithPagination(offset, limit);
-    }
-
-    @Override
-    public List<T> findByFilterWithPagination(Filter filter, Integer offset, Integer limit) {
-        return getRepository().findByFilterWithPagination(filter, offset, limit);
+    public Long count() {
+        return getRepository().count();
     }
     
     @Override
-    public Long countByFilterWithPagination(Filter filter, Integer offset, Integer limit) {
-        return getRepository().countByFilterWithPagination(filter, offset, limit);
+    public List<T> find(Integer offset, Integer limit) {
+        return getRepository().find(offset, limit);
     }
 
     @Override
-    public List<T> findByFieldListWithPagination(List<Field> filterList, List<Field> sortList, Integer offset, Integer limit) {
-        return getRepository().findByFieldListWithPagination(filterList, sortList, offset, limit);
+    public Long count(Integer offset, Integer limit) {
+        return getRepository().count(offset, limit);
     }
 
     @Override
-    public Long countByFieldListWithPagination(List<Field> fieldList, Integer offset, Integer limit) {
-        return getRepository().countByFieldListWithPagination(fieldList, offset, limit);
+    public List<T> find(Filter filter) {
+        return getRepository().find(filter);
+    }
+
+    @Override
+    public Long count(Filter filter) {
+        return getRepository().count(filter);
+    }
+
+    @Override
+    public List<T> find(Filter filter, Integer offset, Integer limit) {
+        return getRepository().find(filter, offset, limit);
+    }
+    
+    @Override
+    public Long count(Filter filter, Integer offset, Integer limit) {
+        return getRepository().count(filter, offset, limit);
+    }
+
+    @Override
+    public List<T> find(List<Field> filterList, List<Field> sortList, Integer offset, Integer limit) {
+        return getRepository().find(filterList, sortList, offset, limit);
+    }
+
+    @Override
+    public Long count(List<Field> fieldList, List<Field> sortList, Integer offset, Integer limit) {
+        return getRepository().count(fieldList, sortList, offset, limit);
     }
     
     @Override
     public void validate(T entity) throws ConstraintViolationException {
         Set<ConstraintViolation<T>> violations = validator.validate(entity);
-        
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
         }

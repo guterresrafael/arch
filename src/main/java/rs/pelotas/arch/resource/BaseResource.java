@@ -43,34 +43,21 @@ public abstract class BaseResource<T extends BaseEntity, I extends Serializable>
         try {
             List<T> entities;
             QueryString queryString = new QueryString(request);
-            
-            //Pagination
             Integer offset = (queryString.getOffset() != null) ? queryString.getOffset() : getOffsetDefaultValue();
             Integer limit = (queryString.getLimit() != null) ? queryString.getLimit() : getLimitDefaultValue();
             
-            //Filters
             if (!queryString.getFilterList().isEmpty()) {
-                entities = getService().findByFieldListWithPagination(queryString.getFilterList(),
-                                                                      queryString.getSortList(),
-                                                                      offset, limit);
+                entities = getService().find(queryString.getFilterList(),
+                                             queryString.getSortList(),
+                                             offset, limit);
             } else {
-                entities = getService().findAllWithPagination(offset, limit);
+                entities = getService().find(offset, limit);
             }
             
-            //OrderBY
-            if (queryString.getSortList().isEmpty()) {
-                //entities = getService().findAllWithPagination(offset, limit);
-            } else {
-                //TODO: implementar suporte orderBy
-                //entities = getService().findAllWithPagination(offset, limit);
-            }
-            
-            //NotFound
             if (entities.isEmpty()) {
                 throw new WebApplicationException(ResponseBuilder.notFound());
             }
             
-            //Custom Fields
             if (!queryString.getFieldList().isEmpty()) {
                 return getEntitiesFromQueryStringCustomFilters(entities, queryString);
             } else {

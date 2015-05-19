@@ -26,25 +26,25 @@ public interface Repository<T extends BaseEntity, I extends Serializable> extend
 
     void remove(I id);
 
-    List<T> findAll();
+    List<T> find();
 
-    Long countAll();
+    Long count();
 
-    List<T> findByFilter(Filter filter);
+    List<T> find(Integer offset, Integer limit);
 
-    Long countByFilter(Filter filter);
+    Long count(Integer offset, Integer limit);
 
-    List<T> findAllWithPagination(Integer offset, Integer limit);
+    List<T> find(Filter filter);
 
-    Long countAllWithPagination(Integer offset, Integer limit);
+    Long count(Filter filter);
 
-    List<T> findByFilterWithPagination(Filter filter, Integer offset, Integer limit);
+    List<T> find(Filter filter, Integer offset, Integer limit);
 
-    Long countByFilterWithPagination(Filter filter, Integer offset, Integer limit);
+    Long count(Filter filter, Integer offset, Integer limit);
 
-    List<T> findByFieldListWithPagination(List<Field> filterList, List<Field> sortList, Integer offset, Integer limit);
+    List<T> find(List<Field> filterList, List<Field> sortList, Integer offset, Integer limit);
 
-    Long countByFieldListWithPagination(List<Field> fieldList, Integer offset, Integer limit);
+    Long count(List<Field> fieldList, List<Field> sortList, Integer offset, Integer limit);
 
     Path getPath(Root root, String strPath);
 }

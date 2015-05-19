@@ -25,44 +25,40 @@ public class Criteria implements Serializable {
     
     public static void addWhere(CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery,
                                 Root root, Filter filter, Map<String, Object> parameters) {
-        if (filter != null) {
-            List<Predicate> predicates = new ArrayList<>();
-            List<Field> fields = new ArrayList<>();
-            Reflection.getAllFields(fields, filter.getClass());
-            for (Field field : fields) {
-                try {
-                    field.setAccessible(true);
-                    Object fieldValue = field.get(filter);
-                    rs.pelotas.arch.helper.Field fieldFilter = new rs.pelotas.arch.helper.Field();
-                    fieldFilter.setName(field.getName());
-                    fieldFilter.setValue(fieldValue);
-                    fieldFilter.setClazz(filter.getClass());
-                    if (field.isAnnotationPresent(CriteriaFilter.class)) {
-                        CriteriaFilter criteriaFilter = field.getAnnotation(CriteriaFilter.class);
-                        fieldFilter.setMethod(criteriaFilter.method());
-                    } else {
-                        fieldFilter.setMethod(Method.EQUAL);
-                    }
-                    parameters.put(fieldFilter.getName(), fieldFilter.getValue());
-                    Criteria.addPredicate(predicates, criteriaBuilder, root, fieldFilter);
-                } catch (IllegalArgumentException | IllegalAccessException | NullPointerException e) {
+        List<Predicate> predicates = new ArrayList<>();
+        List<Field> fields = new ArrayList<>();
+        Reflection.getAllFields(fields, filter.getClass());
+        for (Field field : fields) {
+            try {
+                field.setAccessible(true);
+                Object fieldValue = field.get(filter);
+                rs.pelotas.arch.helper.Field fieldFilter = new rs.pelotas.arch.helper.Field();
+                fieldFilter.setName(field.getName());
+                fieldFilter.setValue(fieldValue);
+                fieldFilter.setClazz(filter.getClass());
+                if (field.isAnnotationPresent(CriteriaFilter.class)) {
+                    CriteriaFilter criteriaFilter = field.getAnnotation(CriteriaFilter.class);
+                    fieldFilter.setMethod(criteriaFilter.method());
+                } else {
+                    fieldFilter.setMethod(Method.EQUAL);
                 }
+                parameters.put(fieldFilter.getName(), fieldFilter.getValue());
+                Criteria.addPredicate(predicates, criteriaBuilder, root, fieldFilter);
+            } catch (IllegalArgumentException | IllegalAccessException | NullPointerException e) {
             }
-            addPredicates(criteriaBuilder, criteriaQuery, predicates);
         }
+        addPredicates(criteriaBuilder, criteriaQuery, predicates);
     }
 
     public static void addWhere(CriteriaBuilder criteriaBuilder, CriteriaQuery<?> criteriaQuery,
                                 Root<?> root, List<rs.pelotas.arch.helper.Field> filterList,
                                 Map<String, Object> parameters) {
-        if (filterList != null && !filterList.isEmpty()) {
-            List<Predicate> predicates = new ArrayList<>();
-            for (rs.pelotas.arch.helper.Field field : filterList) {
-                parameters.put(field.getName(), field.getValue());
-                Criteria.addPredicate(predicates, criteriaBuilder, root, field);
-            }
-            addPredicates(criteriaBuilder, criteriaQuery, predicates);
+        List<Predicate> predicates = new ArrayList<>();
+        for (rs.pelotas.arch.helper.Field field : filterList) {
+            parameters.put(field.getName(), field.getValue());
+            Criteria.addPredicate(predicates, criteriaBuilder, root, field);
         }
+        addPredicates(criteriaBuilder, criteriaQuery, predicates);
     }
     
     private static void addPredicate(List<Predicate> predicates, CriteriaBuilder criteriaBuilder,
@@ -93,7 +89,7 @@ public class Criteria implements Serializable {
     private static void addPredicateWithoutValueBased(List<Predicate> predicates, CriteriaBuilder criteriaBuilder,
                                                       Root root, rs.pelotas.arch.helper.Field field) {
         switch (field.getMethod()) {
-                case IS_NULL:
+            case IS_NULL:
                 predicates.add(criteriaBuilder.isNull(root.get(field.getName())));
                 break;
             case IS_NOT_NULL:
