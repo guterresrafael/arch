@@ -11,39 +11,39 @@ import rs.pelotas.arch.helper.Field;
 /**
  *
  * @author Rafael Guterres
- * @param <EntityType>
- * @param <IdType>
+ * @param <T>
+ * @param <I>
  */
-public interface Repository<EntityType extends BaseEntity, IdType extends Serializable> 
+public interface Repository<T extends BaseEntity, I extends Serializable> 
          extends Serializable {
 
     EntityManager getEntityManager();
 
-    EntityType load(IdType id);
+    T load(I id);
 
-    void persist(EntityType entity);
+    void persist(T entity);
 
-    EntityType merge(EntityType entity);
+    T merge(T entity);
 
-    void remove(IdType id);
+    void remove(I id);
 
-    List<EntityType> findAll();
+    List<T> findAll();
 
     Long countAll();
 
-    List<EntityType> findByFilter(Filter filter);
+    List<T> findByFilter(Filter filter);
 
     Long countByFilter(Filter filter);
 
-    List<EntityType> findAllWithPagination(Integer offset, Integer limit);
+    List<T> findAllWithPagination(Integer offset, Integer limit);
 
     Long countAllWithPagination(Integer offset, Integer limit);
 
-    List<EntityType> findByFilterWithPagination(Filter filter, Integer offset, Integer limit);
+    List<T> findByFilterWithPagination(Filter filter, Integer offset, Integer limit);
 
     Long countByFilterWithPagination(Filter filter, Integer offset, Integer limit);
 
-    List<EntityType> findByFieldListWithPagination(List<Field> filterList, List<Field> sortList, Integer offset, Integer limit);
+    List<T> findByFieldListWithPagination(List<Field> filterList, List<Field> sortList, Integer offset, Integer limit);
 
     Long countByFieldListWithPagination(List<Field> fieldList, Integer offset, Integer limit);
 

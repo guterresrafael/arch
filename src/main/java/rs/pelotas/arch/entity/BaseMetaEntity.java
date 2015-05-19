@@ -8,6 +8,8 @@ import java.io.Serializable;
  */
 public abstract class BaseMetaEntity implements Serializable {
     
+    private static final long serialVersionUID = 8731467211883576183L;
+    
     public abstract String getKey();
     
     public abstract void setKey(String key);

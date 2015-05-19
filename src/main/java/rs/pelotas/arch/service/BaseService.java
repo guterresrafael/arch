@@ -15,22 +15,22 @@ import rs.pelotas.arch.helper.Field;
 /**
  *
  * @author Rafael Guterres
- * @param <EntityType>
- * @param <IdType>
+ * @param <T>
+ * @param <I>
  */
-public abstract class BaseService<EntityType extends BaseEntity, IdType extends Serializable>
-           implements Service<EntityType, IdType> {
+public abstract class BaseService<T extends BaseEntity, I extends Serializable>
+           implements Service<T, I> {
 
     @Inject
     Validator validator;
     
     @Override
-    public EntityType load(IdType id) {
+    public T load(I id) {
         return getRepository().load(id);
     }
 
     @Override
-    public EntityType save(EntityType entity) {
+    public T save(T entity) {
         if (entity != null && ((BaseEntity) entity).getId() != null) {
             getRepository().persist(entity);
         } else {
@@ -40,12 +40,12 @@ public abstract class BaseService<EntityType extends BaseEntity, IdType extends 
     }
 
     @Override
-    public void delete(IdType id) {
+    public void delete(I id) {
         getRepository().remove(id);
     }
 
     @Override
-    public List<EntityType> findAll() {
+    public List<T> findAll() {
         return getRepository().findAll();
     }
     
@@ -55,7 +55,7 @@ public abstract class BaseService<EntityType extends BaseEntity, IdType extends 
     }
 
     @Override
-    public List<EntityType> findByFilter(Filter filter) {
+    public List<T> findByFilter(Filter filter) {
         return getRepository().findByFilter(filter);
     }
 
@@ -66,7 +66,7 @@ public abstract class BaseService<EntityType extends BaseEntity, IdType extends 
 
     
     @Override
-    public List<EntityType> findAllWithPagination(Integer offset, Integer limit) {
+    public List<T> findAllWithPagination(Integer offset, Integer limit) {
         return getRepository().findAllWithPagination(offset, limit);
     }
 
@@ -76,7 +76,7 @@ public abstract class BaseService<EntityType extends BaseEntity, IdType extends 
     }
 
     @Override
-    public List<EntityType> findByFilterWithPagination(Filter filter, Integer offset, Integer limit) {
+    public List<T> findByFilterWithPagination(Filter filter, Integer offset, Integer limit) {
         return getRepository().findByFilterWithPagination(filter, offset, limit);
     }
     
@@ -86,7 +86,7 @@ public abstract class BaseService<EntityType extends BaseEntity, IdType extends 
     }
 
     @Override
-    public List<EntityType> findByFieldListWithPagination(List<Field> filterList, List<Field> sortList, Integer offset, Integer limit) {
+    public List<T> findByFieldListWithPagination(List<Field> filterList, List<Field> sortList, Integer offset, Integer limit) {
         return getRepository().findByFieldListWithPagination(filterList, sortList, offset, limit);
     }
 
@@ -96,8 +96,8 @@ public abstract class BaseService<EntityType extends BaseEntity, IdType extends 
     }
     
     @Override
-    public void validate(EntityType entity) throws ConstraintViolationException {
-        Set<ConstraintViolation<EntityType>> violations = validator.validate(entity);
+    public void validate(T entity) throws ConstraintViolationException {
+        Set<ConstraintViolation<T>> violations = validator.validate(entity);
         
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));

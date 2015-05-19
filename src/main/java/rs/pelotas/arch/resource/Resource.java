@@ -10,24 +10,24 @@ import rs.pelotas.arch.service.Service;
 /**
  *
  * @author Rafael Guterres
- * @param <EntityType>
- * @param <IdType>
+ * @param <T>
+ * @param <I>
  */
-public interface Resource<EntityType extends BaseEntity, IdType extends Serializable> extends Serializable {
+public interface Resource<T extends BaseEntity, I extends Serializable> extends Serializable {
     
-    Service<EntityType, IdType> getService();
+    Service<T, I> getService();
     
     Integer getOffsetDefaultValue();
     
     Integer getLimitDefaultValue();
     
-    List<EntityType> getEntities(HttpServletRequest request);    
+    List<T> getEntities(HttpServletRequest request);    
     
-    Response postEntity(EntityType entity);
+    Response postEntity(T entity);
     
-    EntityType getEntityById(IdType id);
+    T getEntityById(I id);
 
-    Response putEntity(IdType id, EntityType entity);
+    Response putEntity(I id, T entity);
     
-    Response deleteEntity(IdType id);
+    Response deleteEntity(I id);
 }

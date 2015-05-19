@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.WebApplicationException;
@@ -18,14 +16,14 @@ import rs.pelotas.arch.helper.Reflection;
 /**
  *
  * @author Rafael Guterres
- * @param <EntityType>
- * @param <IdType>
+ * @param <T>
+ * @param <I>
  */
-public abstract class BaseResource<EntityType extends BaseEntity, IdType extends Serializable>
-           implements Resource<EntityType, IdType> {
+public abstract class BaseResource<T extends BaseEntity, I extends Serializable>
+           implements Resource<T, I> {
 
     private static final long serialVersionUID = 877833877085359482L;
-    private final Class<EntityType> entityClass = Reflection.getGenericArgumentType(getClass());
+    private final Class<T> entityClass = Reflection.getGenericArgumentType(getClass());
 
     private static final Integer PARAM_OFFSET_DEFAULT_VALUE = 0;
     private static final Integer PARAM_LIMIT_DEFAULT_VALUE = 20;
@@ -41,9 +39,9 @@ public abstract class BaseResource<EntityType extends BaseEntity, IdType extends
     }
 
     @Override
-    public List<EntityType> getEntities(HttpServletRequest request) {
+    public List<T> getEntities(HttpServletRequest request) {
         try {
-            List<EntityType> entities;
+            List<T> entities;
             QueryString queryString = new QueryString(request);
             
             //Pagination
@@ -84,7 +82,7 @@ public abstract class BaseResource<EntityType extends BaseEntity, IdType extends
     }
 
     @Override
-    public Response postEntity(EntityType entity) {
+    public Response postEntity(T entity) {
         try {
             getService().validate(entity);
             entity = getService().save(entity);
@@ -97,8 +95,8 @@ public abstract class BaseResource<EntityType extends BaseEntity, IdType extends
     }
 
     @Override
-    public EntityType getEntityById(IdType id) {
-        EntityType entity = getService().load(id);
+    public T getEntityById(I id) {
+        T entity = getService().load(id);
         if (entity == null) {
             throw new WebApplicationException(ResponseBuilder.notFound());
         }
@@ -106,7 +104,7 @@ public abstract class BaseResource<EntityType extends BaseEntity, IdType extends
     }
     
     @Override
-    public Response putEntity(IdType id, EntityType entity) {
+    public Response putEntity(I id, T entity) {
         try {
             getService().validate(entity);
             entity = getService().save(entity);
@@ -119,7 +117,7 @@ public abstract class BaseResource<EntityType extends BaseEntity, IdType extends
     }
 
     @Override
-    public Response deleteEntity(IdType id) {
+    public Response deleteEntity(I id) {
         try {
             getService().delete(id);
         } catch (Exception e) {
@@ -128,19 +126,19 @@ public abstract class BaseResource<EntityType extends BaseEntity, IdType extends
         return ResponseBuilder.deleted();
     }
 
-    private List<EntityType> getEntitiesFromQueryStringCustomFilters(List<EntityType> entities, QueryString queryString) {
+    private List<T> getEntitiesFromQueryStringCustomFilters(List<T> entities, QueryString queryString) {
         try {
             List<Map<String, Object>> entitiesMap = getEntitiesMapList(entities, queryString);
-            List<EntityType> entitiesCustomFields = getEntitiesCustomFields(entitiesMap);
+            List<T> entitiesCustomFields = getEntitiesCustomFields(entitiesMap);
             return entitiesCustomFields;
         } catch (IllegalArgumentException | IllegalAccessException ex) {
             return null;
         }
     }
     
-    private List<Map<String, Object>> getEntitiesMapList(List<EntityType> entities, QueryString queryString) throws IllegalArgumentException, IllegalAccessException {
+    private List<Map<String, Object>> getEntitiesMapList(List<T> entities, QueryString queryString) throws IllegalArgumentException, IllegalAccessException {
         List<Map<String, Object>> entitiesMap = new ArrayList<>();
-        for (EntityType entity : entities) {
+        for (T entity : entities) {
             Map<String, Object> entityMap = new HashMap<>();
             List<Field> entityFields = new ArrayList<>();
             Reflection.getAllFields(entityFields, entity.getClass());
@@ -158,10 +156,10 @@ public abstract class BaseResource<EntityType extends BaseEntity, IdType extends
         return entitiesMap;
     }
     
-    private List<EntityType> getEntitiesCustomFields(List<Map<String, Object>> entitiesMap) throws IllegalArgumentException, IllegalAccessException {
-        List<EntityType> entities = new ArrayList<>();
+    private List<T> getEntitiesCustomFields(List<Map<String, Object>> entitiesMap) throws IllegalArgumentException, IllegalAccessException {
+        List<T> entities = new ArrayList<>();
         for (Map<String, Object> entityMap : entitiesMap) {
-            EntityType entity = Reflection.instantiateClass(entityClass);
+            T entity = Reflection.instantiateClass(entityClass);
             List<Field> entityFields = new ArrayList<>();
             Reflection.getAllFields(entityFields, entity.getClass());
             for (Map.Entry<String, Object> entry : entityMap.entrySet()) {

@@ -92,7 +92,7 @@ public class QueryString {
             while(stringTokenizer.hasMoreTokens()) {
                 Field field = new Field();
                 String fieldParam = stringTokenizer.nextToken();
-                String order;
+                String order = null;
                 switch (fieldParam.substring(0, 1)) {
                     case ORDERBY_DESC_OPERATOR:
                         order = OrderBy.DESC.name();
@@ -100,8 +100,9 @@ public class QueryString {
                         break;
                     case ORDERBY_ASC_OPERATOR:
                         fieldParam = fieldParam.substring(1);
-                    default:
                         order = OrderBy.ASC.name();
+                        break;
+                    default:
                         break;
                 }
                 field.setName(fieldParam);

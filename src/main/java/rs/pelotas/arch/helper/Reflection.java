@@ -81,7 +81,7 @@ public class Reflection {
 
     /**
      * Variação do método
-     * {@link ClassUtils#getGenericArgumentType(Class, Class, int)}
+     * {@link Reflection#getGenericArgumentType(Class, Class, int)}
      *
      * @param currentClass
      * @return
@@ -156,7 +156,6 @@ public class Reflection {
         ClassLoader cl = getDefaultClassLoader();
         try {
             Enumeration<URL> urls = cl.getResources(name);
-
             while (urls.hasMoreElements()) {
                 URL url = (URL) urls.nextElement();
                 URLConnection urlConnection = url.openConnection();
@@ -164,7 +163,7 @@ public class Reflection {
                 inputsStreams.add(urlConnection.getInputStream());
             }
         } catch (IOException e) {
-            e.printStackTrace(System.err);
+            throw new IllegalArgumentException(e);
         }
         return inputsStreams;
     }
