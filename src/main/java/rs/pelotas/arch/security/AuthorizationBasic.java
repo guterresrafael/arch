@@ -23,51 +23,23 @@ public class AuthorizationBasic implements Serializable {
     public static final String AUTHORIZATION_REGEX = AUTHORIZATION_SCHEME + " ";
     public static final String AUTHORIZATION_REPLACEMENT = "";
 
-    private Long id;
-    private String username;
-    private String password;
-    private Set<String> roles;
-
-    public AuthorizationBasic(ContainerRequestContext requestContext) {
+    public static UserPrincipal getUserPrincipal(ContainerRequestContext requestContext) {
         final MultivaluedMap<String, String> headers = requestContext.getHeaders();
         final List<String> authorization = headers.get(AUTHORIZATION_PROPERTY);
         if (authorization == null || authorization.isEmpty()) {
-            return;
+            return null;
         }
         final String encodedUsernameAndPassword = authorization.get(0).replaceFirst(AUTHORIZATION_REGEX, AUTHORIZATION_REPLACEMENT);
         String usernameAndPassword;
         try {
             usernameAndPassword = new String(Base64.decode(encodedUsernameAndPassword));
         } catch (IOException e) {
-            return;
+            return null;
         }
         final StringTokenizer tokenizer = new StringTokenizer(usernameAndPassword, ":");
-        this.username = tokenizer.nextToken();
-        this.password = tokenizer.nextToken();
-        this.roles = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public Set<String> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<String> roles) {
-        this.roles = roles;
+        String username = tokenizer.nextToken();
+        String password = tokenizer.nextToken();
+        Set<String> roles = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        return new UserPrincipal(username, password, roles);
     }
 }

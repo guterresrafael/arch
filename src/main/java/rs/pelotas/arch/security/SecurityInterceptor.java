@@ -28,7 +28,7 @@ public class SecurityInterceptor implements ContainerRequestFilter {
     private static final ServerResponse HTTP_403_FORBIDDEN = new ServerResponse(null, 403, new Headers<>());
 
     @Inject
-    AuthenticationAndAuthorizationSecurity authSecurity;
+    SecurityService securityService;
     
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
@@ -45,9 +45,9 @@ public class SecurityInterceptor implements ContainerRequestFilter {
             }
             
             //Authorization
-            AuthorizationBasic authorization = new AuthorizationBasic(requestContext);
-            if (authorization.getUsername() == null || authorization.getPassword() == null ||
-                !isAuthenticatedUser(authorization)) {
+            UserPrincipal userPrincipal = AuthorizationBasic.getUserPrincipal(requestContext);
+            if (userPrincipal == null || userPrincipal.getName() == null || 
+                userPrincipal.getPassword() == null || !isAuthenticatedUser(userPrincipal)) {
                 requestContext.abortWith(HTTP_401_UNAUTHORIZED);
                 return;
             }
@@ -56,21 +56,21 @@ public class SecurityInterceptor implements ContainerRequestFilter {
             if (method.isAnnotationPresent(RolesAllowed.class)) {
                 RolesAllowed rolesAnnotation = method.getAnnotation(RolesAllowed.class);
                 Set<String> roles = new HashSet<>(Arrays.asList(rolesAnnotation.value()));
-                if (!isAuthorizedUser(authorization, roles)) {
+                if (!isAuthorizedUser(userPrincipal, roles)) {
                     requestContext.abortWith(HTTP_403_FORBIDDEN);
                 }
             }
             
-            //Add Authorization to Context
-            requestContext.setProperty(AuthorizationBasic.AUTHORIZATION_PROPERTY, authorization);
+            //SecurityContext
+            requestContext.setSecurityContext(new SecurityContext(userPrincipal));
         }
     }
     
-    private boolean isAuthenticatedUser(AuthorizationBasic authorization) {
-        return authSecurity.isAuthenticatedUser(authorization);
+    private boolean isAuthenticatedUser(UserPrincipal userPrincipal) {
+        return securityService.isAuthenticatedUser(userPrincipal);
     }
     
-    private boolean isAuthorizedUser(AuthorizationBasic authorization, Set<String> roles) {
-        return authSecurity.isAuthorizedUser(authorization, roles);
+    private boolean isAuthorizedUser(UserPrincipal userPrincipal, Set<String> roles) {
+        return securityService.isAuthorizedUser(userPrincipal, roles);
     }
 }
