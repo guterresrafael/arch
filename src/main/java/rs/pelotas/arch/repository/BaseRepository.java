@@ -164,7 +164,7 @@ public abstract class BaseRepository<T extends BaseEntity, I extends Serializabl
         return getCount(query, offset, limit);
     }
 
-    private void addQueryParameters(Query query, Map<String, Object> parameters) {
+    private void addQueryParameters(TypedQuery query, Map<String, Object> parameters) {
         if (parameters != null && !parameters.isEmpty()) {
             for (Map.Entry<String, Object> entry : parameters.entrySet()) {
                 //query.setParameter(entry.getKey(), entry.getValue());
