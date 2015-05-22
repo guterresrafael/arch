@@ -24,6 +24,11 @@ public class Resources implements Serializable {
     ManagedScheduledExecutorService managedScheduledExecutorService;
 
     @Produces
+    public Logger getLogger(InjectionPoint injectionPoint) {
+        return Logger.getLogger(injectionPoint.getMember().getDeclaringClass().getName());
+    }
+    
+    @Produces
     public EntityManager getEntityManager() {
         return entityManager;
     }
@@ -31,10 +36,5 @@ public class Resources implements Serializable {
     @Produces
     public ManagedScheduledExecutorService getManagedScheduledExecutorService() {
         return managedScheduledExecutorService;
-    }
-
-    @Produces
-    public Logger getLogger(InjectionPoint injectionPoint) {
-        return Logger.getLogger(injectionPoint.getMember().getDeclaringClass().getName());
     }
 }
