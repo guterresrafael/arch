@@ -51,17 +51,15 @@ public abstract class BaseResource<T extends BaseEntity, I extends Serializable>
                 entities = getService().find(queryString.getFilterList(),
                                              queryString.getSortList(),
                                              offset, limit);
-            } else {
-                entities = getService().find(offset, limit);
-            }
-            
-            if (entities.isEmpty()) {
-                throw new WebApplicationException(ResponseBuilder.notFound());
-            }
-            
-            if (!queryString.getFieldList().isEmpty()) {
+                if (entities.isEmpty()) {
+                    throw new WebApplicationException(ResponseBuilder.notFound());
+                }
                 return getEntitiesFromQueryStringCustomFilters(entities, queryString);
             } else {
+                entities = getService().find(offset, limit);
+                if (entities.isEmpty()) {
+                    throw new WebApplicationException(ResponseBuilder.notFound());
+                }
                 return entities;
             }
         } catch (IllegalArgumentException e) {

@@ -36,34 +36,35 @@ public class SecurityInterceptor implements ContainerRequestFilter {
         Method method = methodInvoker.getMethod();
 
         //@PermitAll
-        if (!method.isAnnotationPresent(PermitAll.class)) {
-        
-            //@DenyAll
-            if (method.isAnnotationPresent(DenyAll.class)) {
-                requestContext.abortWith(HTTP_403_FORBIDDEN);
-                return;
-            }
-            
-            //Authorization
-            UserPrincipal userPrincipal = AuthorizationBasic.getUserPrincipal(requestContext);
-            if (userPrincipal == null || userPrincipal.getName() == null || 
-                userPrincipal.getPassword() == null || !isAuthenticatedUser(userPrincipal)) {
-                requestContext.abortWith(HTTP_401_UNAUTHORIZED);
-                return;
-            }
-            
-            //@RolesAllowed
-            if (method.isAnnotationPresent(RolesAllowed.class)) {
-                RolesAllowed rolesAnnotation = method.getAnnotation(RolesAllowed.class);
-                Set<String> roles = new HashSet<>(Arrays.asList(rolesAnnotation.value()));
-                if (!isAuthorizedUser(userPrincipal, roles)) {
-                    requestContext.abortWith(HTTP_403_FORBIDDEN);
-                }
-            }
-            
-            //SecurityContext
-            requestContext.setSecurityContext(new SecurityContext(userPrincipal));
+        if (method.isAnnotationPresent(PermitAll.class)) {
+            return;
         }
+        
+        //@DenyAll
+        if (method.isAnnotationPresent(DenyAll.class)) {
+            requestContext.abortWith(HTTP_403_FORBIDDEN);
+            return;
+        }
+
+        //Authorization
+        UserPrincipal userPrincipal = AuthorizationBasic.getUserPrincipal(requestContext);
+        if (userPrincipal == null || userPrincipal.getName() == null || 
+            userPrincipal.getPassword() == null || !isAuthenticatedUser(userPrincipal)) {
+            requestContext.abortWith(HTTP_401_UNAUTHORIZED);
+            return;
+        }
+
+        //@RolesAllowed
+        if (method.isAnnotationPresent(RolesAllowed.class)) {
+            RolesAllowed rolesAnnotation = method.getAnnotation(RolesAllowed.class);
+            Set<String> roles = new HashSet<>(Arrays.asList(rolesAnnotation.value()));
+            if (!isAuthorizedUser(userPrincipal, roles)) {
+                requestContext.abortWith(HTTP_403_FORBIDDEN);
+            }
+        }
+
+        //SecurityContext
+        requestContext.setSecurityContext(new SecurityContext(userPrincipal));
     }
     
     private boolean isAuthenticatedUser(UserPrincipal userPrincipal) {
