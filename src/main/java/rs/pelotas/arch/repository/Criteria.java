@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -22,7 +23,10 @@ public class Criteria implements Serializable {
 
     private static final String LIKE_PARAM_VALUE = "*";
     private static final String LIKE_CRITERIA_VALUE = "%";
-    
+
+    private Criteria() {
+    }
+
     public static void addWhere(CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery,
                                 Root root, Filter filter, Map<String, Object> parameters) {
         List<Predicate> predicates = new ArrayList<>();
@@ -45,6 +49,7 @@ public class Criteria implements Serializable {
                 parameters.put(fieldFilter.getName(), fieldFilter.getValue());
                 Criteria.addPredicate(predicates, criteriaBuilder, root, fieldFilter);
             } catch (IllegalArgumentException | IllegalAccessException | NullPointerException e) {
+                Logger.getAnonymousLogger().warning(e.getMessage());
             }
         }
         addPredicates(criteriaBuilder, criteriaQuery, predicates);
@@ -83,6 +88,8 @@ public class Criteria implements Serializable {
             case NOT_LIKE:
                 predicates.add(criteriaBuilder.notLike(root.get(field.getName()), addLikeChar(field.getValue())));
                 break;
+            default:
+                break;
         }
     }
     
@@ -104,6 +111,8 @@ public class Criteria implements Serializable {
             case IS_EMPTY:
                 predicates.add(criteriaBuilder.isEmpty(root.get(field.getName())));
                 break;
+            default:
+                break;
         }
     }
     
@@ -124,6 +133,8 @@ public class Criteria implements Serializable {
                 break;
             case BETWEEN:
                 predicates.add(criteriaBuilder.between(root.get(field.getName()), field.getValueComparable(), field.getField().getValueComparable()));
+                break;
+            default:
                 break;
         }
     }

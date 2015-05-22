@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Classe que abstrai o uso da API Reflection.
@@ -23,6 +24,9 @@ public class Reflection implements Serializable {
     private static final long serialVersionUID = -7417663509020364988L;
 
     private static final String RAWTYPES = "rawtypes";
+
+    private Reflection() {
+    }
 
     /**
      * Retorna a classe informada no argumento do generic Type.
@@ -188,8 +192,8 @@ public class Reflection implements Serializable {
         }
         try {
             classLoader = Thread.currentThread().getContextClassLoader();
-        } catch (Exception ex) {
-            // Cannot access thread context ClassLoader - falling back to system class loader...
+        } catch (Exception e) {
+            Logger.getAnonymousLogger().warning(e.getMessage());
         }
         if (classLoader == null) {
             // No thread context class loader -> use class loader of this class.

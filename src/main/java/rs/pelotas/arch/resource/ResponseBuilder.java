@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Response;
@@ -18,6 +19,9 @@ import javax.ws.rs.core.Response;
 public class ResponseBuilder implements Serializable {
 
     private static final long serialVersionUID = -4360335602897527345L;
+
+    private ResponseBuilder() {
+    }
 
     public static Response ok() {
         return Response.status(Response.Status.OK).build();
@@ -109,7 +113,8 @@ public class ResponseBuilder implements Serializable {
     public static Response redirect(String uri) {
         try {
             return Response.seeOther(new URI(uri)).build();
-        } catch (URISyntaxException ex) {
+        } catch (URISyntaxException e) {
+            Logger.getAnonymousLogger().warning(e.getMessage());
             return null;
         }
     }

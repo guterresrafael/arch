@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  *
@@ -13,6 +14,9 @@ import java.util.Map;
 public class Assembler implements Serializable {
 
     private static final long serialVersionUID = -2126578828818584021L;
+
+    private Assembler() {
+    }
 
     public static void assembler(Object objectFrom, Object objectTo) {
         try {
@@ -36,7 +40,7 @@ public class Assembler implements Serializable {
                 }
             }
         } catch (IllegalArgumentException | IllegalAccessException e) {
-            //TODO: Implementar tratamento de exceção
+            Logger.getAnonymousLogger().warning(e.getMessage());
         }
     }
     
@@ -61,7 +65,7 @@ public class Assembler implements Serializable {
                 }
             }
         } catch (IllegalArgumentException | IllegalAccessException e) {
-            //TODO: Implementar tratamento de exceção
+            Logger.getAnonymousLogger().warning(e.getMessage());
         }
     }
 }

@@ -35,7 +35,7 @@ public abstract class BaseService<T extends BaseEntity, I extends Serializable> 
         if (entity != null && ((BaseEntity) entity).getId() != null) {
             getRepository().persist(entity);
         } else {
-            entity = getRepository().merge(entity);
+            return getRepository().merge(entity);
         }
         return entity;
     }

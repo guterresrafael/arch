@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.MultivaluedMap;
 import org.jboss.resteasy.util.Base64;
@@ -23,6 +24,9 @@ public class AuthorizationBasic implements Serializable {
     public static final String AUTHORIZATION_REGEX = AUTHORIZATION_SCHEME + " ";
     public static final String AUTHORIZATION_REPLACEMENT = "";
 
+    private AuthorizationBasic() {
+    }
+
     public static UserPrincipal getUserPrincipal(ContainerRequestContext requestContext) {
         final MultivaluedMap<String, String> headers = requestContext.getHeaders();
         final List<String> authorization = headers.get(AUTHORIZATION_PROPERTY);
@@ -34,6 +38,7 @@ public class AuthorizationBasic implements Serializable {
         try {
             usernameAndPassword = new String(Base64.decode(encodedUsernameAndPassword));
         } catch (IOException e) {
+            Logger.getAnonymousLogger().warning(e.getMessage());
             return null;
         }
         final StringTokenizer tokenizer = new StringTokenizer(usernameAndPassword, ":");

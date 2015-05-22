@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.WebApplicationException;
@@ -72,8 +73,7 @@ public abstract class BaseResource<T extends BaseEntity, I extends Serializable>
     public Response postEntity(T entity) {
         try {
             getService().validate(entity);
-            entity = getService().save(entity);
-            return ResponseBuilder.ok(entity);
+            return ResponseBuilder.ok(getService().save(entity));
         } catch (ConstraintViolationException cve) {
             return ResponseBuilder.badRequest(cve);
         } catch (Exception e) {
@@ -94,8 +94,7 @@ public abstract class BaseResource<T extends BaseEntity, I extends Serializable>
     public Response putEntity(I id, T entity) {
         try {
             getService().validate(entity);
-            entity = getService().save(entity);
-            return ResponseBuilder.ok(entity);
+            return ResponseBuilder.ok(getService().save(entity));
         } catch (ConstraintViolationException cve) {
             return ResponseBuilder.badRequest(cve);
         } catch (Exception e) {
@@ -117,10 +116,13 @@ public abstract class BaseResource<T extends BaseEntity, I extends Serializable>
         try {
             List<Map<String, Object>> entitiesMap = getEntitiesMapList(entities, queryString);
             List<T> entitiesCustomFields = getEntitiesCustomFields(entitiesMap);
-            return entitiesCustomFields;
-        } catch (IllegalArgumentException | IllegalAccessException ex) {
-            return null;
+            if (!entitiesCustomFields.isEmpty()) {
+                return entitiesCustomFields;
+            }
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            Logger.getAnonymousLogger().warning(e.getMessage());
         }
+        return null;
     }
     
     private List<Map<String, Object>> getEntitiesMapList(List<T> entities, QueryString queryString) throws IllegalArgumentException, IllegalAccessException {

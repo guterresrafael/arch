@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import rs.pelotas.arch.enumeration.Method;
 import rs.pelotas.arch.enumeration.OrderBy;
@@ -127,6 +128,7 @@ public class QueryString implements Serializable {
             try {
                 Param.valueOf(paramName.toUpperCase());
             } catch (IllegalArgumentException e) {
+                Logger.getAnonymousLogger().warning(e.getMessage());
                 String paramValue = request.getParameter(paramName);
                 Field field = new Field();
                 field.setName(paramName);

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.logging.Logger;
 import rs.pelotas.arch.enumeration.Method;
 import rs.pelotas.arch.enumeration.OrderBy;
 
@@ -101,10 +102,12 @@ public class Field implements Serializable {
                                                Integer.parseInt(dateArray[2]));
             return (Comparable) Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         } catch (Exception e) {
+            Logger.getAnonymousLogger().warning(e.getMessage());
         }
         try {
             return (Comparable) Long.parseLong((String) this.value);
         } catch (Exception e) {
+            Logger.getAnonymousLogger().warning(e.getMessage());
         }
         return (Comparable) this.value;
     }
