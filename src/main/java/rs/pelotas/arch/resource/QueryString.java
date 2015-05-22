@@ -159,6 +159,9 @@ public class QueryString implements Serializable {
                     break;
                 case NOT_OPERATOR:
                     field.setMethod(Method.NOT_EQUAL);
+                    break;
+                default:
+                    break;
             }
             if (field.getMethod() != null) {
                 field.setName(paramName.substring(0, paramName.length() -1));
