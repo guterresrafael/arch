@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <actions>
     <action>
+        <actionName>CUSTOM-Clean Install</actionName>
+        <displayName>Clean Install</displayName>
+        <goals>
+            <goal>clean</goal>
+            <goal>install</goal>
+        </goals>
+    </action>
+    <action>
         <actionName>CUSTOM-Sonar Analyze</actionName>
         <displayName>Sonar Analyze</displayName>
         <goals>

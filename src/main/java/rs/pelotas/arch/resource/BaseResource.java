@@ -10,9 +10,13 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import rs.pelotas.arch.entity.BaseEntity;
 import rs.pelotas.arch.helper.Reflection;
+import rs.pelotas.arch.security.UserPrincipal;
+import rs.pelotas.arch.security.role.AdminRole;
 
 /**
  *
@@ -28,6 +32,9 @@ public abstract class BaseResource<T extends BaseEntity, I extends Serializable>
 
     private static final Integer PARAM_OFFSET_DEFAULT_VALUE = 0;
     private static final Integer PARAM_LIMIT_DEFAULT_VALUE = 20;
+    
+    @Context
+    SecurityContext securityContext;
     
     @Override
     public Integer getOffsetDefaultValue() {
@@ -81,6 +88,7 @@ public abstract class BaseResource<T extends BaseEntity, I extends Serializable>
 
     @Override
     public T getEntityById(I id) {
+        validateSecurityContext(AdminRole.READ, id);
         T entity = getService().load(id);
         if (entity == null) {
             throw new WebApplicationException(ResponseBuilder.notFound());
@@ -90,6 +98,7 @@ public abstract class BaseResource<T extends BaseEntity, I extends Serializable>
     
     @Override
     public Response putEntity(I id, T entity) {
+        validateSecurityContext(AdminRole.UPDATE, id);
         try {
             getService().validate(entity);
             return ResponseBuilder.ok(getService().save(entity));
@@ -102,6 +111,7 @@ public abstract class BaseResource<T extends BaseEntity, I extends Serializable>
 
     @Override
     public Response deleteEntity(I id) {
+        validateSecurityContext(AdminRole.DELETE, id);
         try {
             getService().delete(id);
         } catch (Exception e) {
@@ -161,5 +171,12 @@ public abstract class BaseResource<T extends BaseEntity, I extends Serializable>
             entities.add(entity);
         }
         return entities;
+    }
+    
+    private void validateSecurityContext(String role, I id) {
+        UserPrincipal userPrincipal = (UserPrincipal) securityContext.getUserPrincipal();
+        if (!securityContext.isUserInRole(role) && !userPrincipal.getId().equals(id)) {
+            throw new WebApplicationException(ResponseBuilder.forbidden());
+        }
     }
 }
