@@ -30,10 +30,20 @@ public class CORSResponseFilter implements ContainerResponseFilter {
     
     @Override
     public void filter(ContainerRequestContext request, ContainerResponseContext response) throws IOException {
-        response.getHeaders().add(ACCESS_CONTROL_ALLOW_ORIGIN_KEY, ACCESS_CONTROL_ALLOW_ORIGIN_VALUE);
-        response.getHeaders().add(ACCESS_CONTROL_ALLOW_HEADERS_KEY, ACCESS_CONTROL_ALLOW_HEADERS_VALUE);
-        response.getHeaders().add(ACCESS_CONTROL_ALLOW_CREDENTIALS_KEY, ACCESS_CONTROL_ALLOW_CREDENTIALS_VALUE);
-        response.getHeaders().add(ACCESS_CONTROL_ALLOW_METHODS_KEY, ACCESS_CONTROL_ALLOW_METHODS_VALUE);
-        response.getHeaders().add(ACCESS_CONTROL_MAX_AGE_KEY, ACCESS_CONTROL_MAX_AGE_VALUE);
+        if (!response.getHeaders().containsKey(ACCESS_CONTROL_ALLOW_ORIGIN_KEY)) {
+            response.getHeaders().add(ACCESS_CONTROL_ALLOW_ORIGIN_KEY, ACCESS_CONTROL_ALLOW_ORIGIN_VALUE);
+        }
+        if (!response.getHeaders().containsKey(ACCESS_CONTROL_ALLOW_HEADERS_KEY)) {
+            response.getHeaders().add(ACCESS_CONTROL_ALLOW_HEADERS_KEY, ACCESS_CONTROL_ALLOW_HEADERS_VALUE);
+        }
+        if (!response.getHeaders().containsKey(ACCESS_CONTROL_ALLOW_CREDENTIALS_KEY)) {
+            response.getHeaders().add(ACCESS_CONTROL_ALLOW_CREDENTIALS_KEY, ACCESS_CONTROL_ALLOW_CREDENTIALS_VALUE);
+        }
+        if (!response.getHeaders().containsKey(ACCESS_CONTROL_ALLOW_METHODS_KEY)) {
+            response.getHeaders().add(ACCESS_CONTROL_ALLOW_METHODS_KEY, ACCESS_CONTROL_ALLOW_METHODS_VALUE);
+        }
+        if (!response.getHeaders().containsKey(ACCESS_CONTROL_MAX_AGE_KEY)) {
+            response.getHeaders().add(ACCESS_CONTROL_MAX_AGE_KEY, ACCESS_CONTROL_MAX_AGE_VALUE);
+        }
     }
 }
