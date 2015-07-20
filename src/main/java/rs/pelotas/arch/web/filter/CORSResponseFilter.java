@@ -1,4 +1,4 @@
-package rs.pelotas.arch.filter;
+package rs.pelotas.arch.web.filter;
 
 import java.io.IOException;
 import javax.ws.rs.container.ContainerRequestContext;
