@@ -9,7 +9,7 @@ import java.util.Set;
  */
 public interface SecurityService extends Serializable {
 
-    public boolean isAuthenticatedUser(UserPrincipal userPrincipal);
+    boolean isAuthenticatedUser(UserPrincipal userPrincipal);
 
-    public boolean isAuthorizedUser(UserPrincipal userPrincipal, Set<String> roles);
+    boolean isAuthorizedUser(UserPrincipal userPrincipal, Set<String> roles);
 }

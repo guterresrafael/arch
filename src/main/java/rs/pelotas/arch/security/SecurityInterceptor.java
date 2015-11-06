@@ -28,8 +28,8 @@ public class SecurityInterceptor implements ContainerRequestFilter {
     private static final ServerResponse HTTP_403_FORBIDDEN = new ServerResponse(null, 403, new Headers<>());
 
     @Inject
-    SecurityService securityService;
-    
+    private SecurityService securityService;
+
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         ResourceMethodInvoker methodInvoker = (ResourceMethodInvoker) requestContext.getProperty(RESOURCE_METHOD_INVOKER_CLASS);
@@ -39,7 +39,7 @@ public class SecurityInterceptor implements ContainerRequestFilter {
         if (method.isAnnotationPresent(PermitAll.class)) {
             return;
         }
-        
+
         //@DenyAll
         if (method.isAnnotationPresent(DenyAll.class)) {
             requestContext.abortWith(HTTP_403_FORBIDDEN);
@@ -48,8 +48,10 @@ public class SecurityInterceptor implements ContainerRequestFilter {
 
         //Authorization
         UserPrincipal userPrincipal = AuthorizationBasic.getUserPrincipal(requestContext);
-        if (userPrincipal == null || userPrincipal.getName() == null || 
-            userPrincipal.getPassword() == null || !isAuthenticatedUser(userPrincipal)) {
+        if (userPrincipal == null
+            || userPrincipal.getName() == null
+            || userPrincipal.getPassword() == null
+            || !isAuthenticatedUser(userPrincipal)) {
             requestContext.abortWith(HTTP_401_UNAUTHORIZED);
             return;
         }
@@ -66,11 +68,11 @@ public class SecurityInterceptor implements ContainerRequestFilter {
         //SecurityContext
         requestContext.setSecurityContext(new SecurityContext(userPrincipal));
     }
-    
+
     private boolean isAuthenticatedUser(UserPrincipal userPrincipal) {
         return securityService.isAuthenticatedUser(userPrincipal);
     }
-    
+
     private boolean isAuthorizedUser(UserPrincipal userPrincipal, Set<String> roles) {
         return securityService.isAuthorizedUser(userPrincipal, roles);
     }

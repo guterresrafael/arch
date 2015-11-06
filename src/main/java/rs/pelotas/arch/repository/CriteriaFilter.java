@@ -13,6 +13,6 @@ import rs.pelotas.arch.enumeration.Method;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.FIELD})
 public @interface CriteriaFilter {
-    
+
     Method method() default Method.EQUAL;
 }

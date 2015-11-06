@@ -15,9 +15,9 @@ public class JobScheduler implements Serializable {
     private static final long serialVersionUID = 5567769350807827834L;
 
     @Inject
-    ManagedScheduledExecutorService managedScheduledExecutorService;
+    private ManagedScheduledExecutorService managedScheduledExecutorService;
 
-    List<JobUnit> jobs = new ArrayList<>();
+    private List<JobUnit> jobs = new ArrayList<>();
 
     public List<JobUnit> getJobs() {
         return jobs;

@@ -32,10 +32,10 @@ public abstract class BaseResource<T extends BaseEntity, I extends Serializable>
 
     private static final Integer PARAM_OFFSET_DEFAULT_VALUE = 0;
     private static final Integer PARAM_LIMIT_DEFAULT_VALUE = 20;
-    
+
     @Context
-    SecurityContext securityContext;
-    
+    private SecurityContext securityContext;
+
     @Override
     public Integer getOffsetDefaultValue() {
         return PARAM_OFFSET_DEFAULT_VALUE;
@@ -51,9 +51,21 @@ public abstract class BaseResource<T extends BaseEntity, I extends Serializable>
         try {
             List<T> entities;
             QueryString queryString = new QueryString(request);
-            Integer offset = (queryString.getOffset() != null) ? queryString.getOffset() : getOffsetDefaultValue();
-            Integer limit = (queryString.getLimit() != null) ? queryString.getLimit() : getLimitDefaultValue();
-            
+
+            Integer offset = null;
+            if (queryString.getOffset() != null) {
+                queryString.getOffset();
+            } else {
+                getOffsetDefaultValue();
+            }
+
+            Integer limit = null;
+            if (queryString.getLimit() != null) {
+                queryString.getLimit();
+            } else {
+                getLimitDefaultValue();
+            }
+
             if (!queryString.getFilterList().isEmpty()) {
                 entities = getService().find(queryString.getFilterList(),
                                              queryString.getSortList(),
@@ -95,7 +107,7 @@ public abstract class BaseResource<T extends BaseEntity, I extends Serializable>
         }
         return entity;
     }
-    
+
     @Override
     public Response putEntity(I id, T entity) {
         validateSecurityContext(AdminRole.UPDATE, id);
@@ -132,7 +144,7 @@ public abstract class BaseResource<T extends BaseEntity, I extends Serializable>
         }
         return null;
     }
-    
+
     private List<Map<String, Object>> getEntitiesMapList(List<T> entities, QueryString queryString) throws IllegalArgumentException, IllegalAccessException {
         List<Map<String, Object>> entitiesMap = new ArrayList<>();
         for (T entity : entities) {
@@ -152,7 +164,7 @@ public abstract class BaseResource<T extends BaseEntity, I extends Serializable>
         }
         return entitiesMap;
     }
-    
+
     private List<T> getEntitiesCustomFields(List<Map<String, Object>> entitiesMap) throws IllegalArgumentException, IllegalAccessException {
         List<T> entities = new ArrayList<>();
         for (Map<String, Object> entityMap : entitiesMap) {
@@ -172,7 +184,7 @@ public abstract class BaseResource<T extends BaseEntity, I extends Serializable>
         }
         return entities;
     }
-    
+
     private void validateSecurityContext(String role, I id) {
         UserPrincipal userPrincipal = (UserPrincipal) securityContext.getUserPrincipal();
         if (!securityContext.isUserInRole(role) && !userPrincipal.getId().equals(id)) {

@@ -17,7 +17,7 @@ public class Field implements Serializable {
     private static final long serialVersionUID = 1473768917303205143L;
 
     private static final String DATE_SEPARATOR_CHARACTER = "-";
-    
+
     private String name;
     private Object value;
     private Class<?> clazz;
@@ -38,7 +38,7 @@ public class Field implements Serializable {
         this.value = value;
         this.method = method;
     }
-    
+
     public String getName() {
         return name;
     }
@@ -93,7 +93,7 @@ public class Field implements Serializable {
         }
         return getValueComparableFromParse();
     }
-    
+
     private Comparable getValueComparableFromParse() {
         try {
             String[] dateArray = ((String) this.value).split(DATE_SEPARATOR_CHARACTER);

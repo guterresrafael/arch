@@ -4,7 +4,7 @@ package rs.pelotas.arch.resource;
  *
  * @author Rafael Guterres
  */
-public class ApplicationPath {
+public final class ApplicationPath {
 
     public static final String API = "/api";
     public static final String ROOT = "/";

@@ -23,8 +23,8 @@ public abstract class BaseService<T extends BaseEntity, I extends Serializable> 
     private static final long serialVersionUID = -6857150974317994345L;
 
     @Inject
-    Validator validator;
-    
+    private Validator validator;
+
     @Override
     public T load(I id) {
         return getRepository().load(id);
@@ -49,12 +49,12 @@ public abstract class BaseService<T extends BaseEntity, I extends Serializable> 
     public List<T> find() {
         return getRepository().find();
     }
-    
+
     @Override
     public Long count() {
         return getRepository().count();
     }
-    
+
     @Override
     public List<T> find(Integer offset, Integer limit) {
         return getRepository().find(offset, limit);
@@ -79,7 +79,7 @@ public abstract class BaseService<T extends BaseEntity, I extends Serializable> 
     public List<T> find(Filter filter, Integer offset, Integer limit) {
         return getRepository().find(filter, offset, limit);
     }
-    
+
     @Override
     public Long count(Filter filter, Integer offset, Integer limit) {
         return getRepository().count(filter, offset, limit);
@@ -94,7 +94,7 @@ public abstract class BaseService<T extends BaseEntity, I extends Serializable> 
     public Long count(List<Field> fieldList, List<Field> sortList, Integer offset, Integer limit) {
         return getRepository().count(fieldList, sortList, offset, limit);
     }
-    
+
     @Override
     public void validate(T entity) throws ConstraintViolationException {
         Set<ConstraintViolation<T>> violations = validator.validate(entity);

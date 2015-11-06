@@ -30,7 +30,7 @@ public abstract class BaseRepository<T extends BaseEntity, I extends Serializabl
     private final Class<T> entityClass = Reflection.getGenericArgumentType(getClass());
 
     @Inject
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Override
     public EntityManager getEntityManager() {

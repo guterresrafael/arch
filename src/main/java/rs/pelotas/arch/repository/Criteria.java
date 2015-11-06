@@ -17,7 +17,7 @@ import rs.pelotas.arch.helper.Reflection;
  *
  * @author Rafael Guterres
  */
-public class Criteria implements Serializable {
+public final class Criteria implements Serializable {
 
     private static final long serialVersionUID = -4367708806996213062L;
 
@@ -65,7 +65,7 @@ public class Criteria implements Serializable {
         }
         addPredicates(criteriaBuilder, criteriaQuery, predicates);
     }
-    
+
     private static void addPredicate(List<Predicate> predicates, CriteriaBuilder criteriaBuilder,
                                      Root root, rs.pelotas.arch.helper.Field field) {
         addPredicateWithValueBased(predicates, criteriaBuilder, root, field);
@@ -92,7 +92,7 @@ public class Criteria implements Serializable {
                 break;
         }
     }
-    
+
     private static void addPredicateWithoutValueBased(List<Predicate> predicates, CriteriaBuilder criteriaBuilder,
                                                       Root root, rs.pelotas.arch.helper.Field field) {
         switch (field.getMethod()) {
@@ -115,7 +115,7 @@ public class Criteria implements Serializable {
                 break;
         }
     }
-    
+
     private static void addPredicateWithComparableBased(List<Predicate> predicates, CriteriaBuilder criteriaBuilder,
                                                              Root root, rs.pelotas.arch.helper.Field field) {
         switch (field.getMethod()) {
@@ -139,17 +139,17 @@ public class Criteria implements Serializable {
         }
     }
 
-    public static void addOrderBy (CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery,
+    public static void addOrderBy(CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery,
                                    Root root, List<rs.pelotas.arch.helper.Field> sortList) {
         //TODO: implementar suporte a ordenacao
     }
-    
+
     private static void addPredicates(CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery, List<Predicate> predicates) {
         if (!predicates.isEmpty()) {
             criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[] {})));
         }
     }
-    
+
     private static String addLikeChar(Object value) {
         return value.toString().replace(LIKE_PARAM_VALUE, LIKE_CRITERIA_VALUE);
     }

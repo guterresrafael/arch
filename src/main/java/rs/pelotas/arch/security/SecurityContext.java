@@ -10,13 +10,13 @@ public class SecurityContext implements javax.ws.rs.core.SecurityContext {
 
     private static final String AUTHENTICATION_SCHEME = "BASIC";
     private static final boolean IS_SECURE = true;
-    
+
     private Principal userPrincipal;
 
     public SecurityContext(Principal userPrincipal) {
         this.userPrincipal = userPrincipal;
     }
-    
+
     public SecurityContext() {
     }
 
@@ -39,5 +39,5 @@ public class SecurityContext implements javax.ws.rs.core.SecurityContext {
     @Override
     public String getAuthenticationScheme() {
         return AUTHENTICATION_SCHEME;
-    }   
+    }
 }

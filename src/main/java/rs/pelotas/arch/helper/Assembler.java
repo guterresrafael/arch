@@ -11,7 +11,7 @@ import java.util.logging.Logger;
  *
  * @author Rafael Guterres
  */
-public class Assembler implements Serializable {
+public final class Assembler implements Serializable {
 
     private static final long serialVersionUID = -2126578828818584021L;
 
@@ -43,7 +43,7 @@ public class Assembler implements Serializable {
             Logger.getAnonymousLogger().warning(e.getMessage());
         }
     }
-    
+
     public static void assembler(Map<String, String> mapFrom, Object objectTo) {
         try {
             List<Field> fieldsTo = new ArrayList<>();

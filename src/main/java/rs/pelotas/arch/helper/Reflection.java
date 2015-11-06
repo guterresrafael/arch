@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  *
  * @author Rafael Guterres
  */
-public class Reflection implements Serializable {
+public final class Reflection implements Serializable {
 
     private static final long serialVersionUID = -7417663509020364988L;
 

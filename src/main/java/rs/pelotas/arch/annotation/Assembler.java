@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE,
          ElementType.FIELD})
 public @interface Assembler {
-    
+
     Class type() default Object.class;
 
     String field() default "";

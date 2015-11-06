@@ -13,16 +13,16 @@ public class MD5Adapter extends XmlAdapter<String, String> {
     private static final String MESSAGE_DIGEST_ALGORITHM = "MD5";
     private static final String STRING_FORMAT = "%32x";
     private static final int SIGNUM_POSITIVE = 1;
-    
+
     @Override
     public String marshal(String value) throws Exception {
         return value;
     }
-    
+
     @Override
     public String unmarshal(String value) throws Exception {
         MessageDigest messageDigest = MessageDigest.getInstance(MESSAGE_DIGEST_ALGORITHM);
-        BigInteger hash = new BigInteger(SIGNUM_POSITIVE, messageDigest.digest(value.getBytes())); 
+        BigInteger hash = new BigInteger(SIGNUM_POSITIVE, messageDigest.digest(value.getBytes()));
         return String.format(STRING_FORMAT, hash);
     }
 }

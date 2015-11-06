@@ -17,7 +17,7 @@ import rs.pelotas.arch.helper.Field;
  * @author Rafael Guterres
  */
 public class QueryString implements Serializable {
-    
+
     private static final long serialVersionUID = -756050251522896230L;
 
     private static final String DELIMITER_PARAM_VALUE = ",";
@@ -29,7 +29,7 @@ public class QueryString implements Serializable {
     private static final String LIKE_OPERATOR = "*";
     private static final String BETWEEN_OPERATOR = "...";
     private static final String BETWEEN_REGEX = "\\.\\.\\.";
-    
+
     private Integer offset;
     private Integer limit;
     private List<String> fieldList;
@@ -58,7 +58,7 @@ public class QueryString implements Serializable {
             this.offset = null;
         }
     }
-    
+
     public Integer getLimit() {
         return limit;
     }
@@ -70,7 +70,7 @@ public class QueryString implements Serializable {
             this.limit = null;
         }
     }
-    
+
     public List<String> getFieldList() {
         return fieldList;
     }
@@ -79,7 +79,7 @@ public class QueryString implements Serializable {
         this.fieldList = new ArrayList<>();
         if (fieldParams != null) {
             StringTokenizer stringTokenizer = new StringTokenizer(fieldParams, DELIMITER_PARAM_VALUE);
-            while(stringTokenizer.hasMoreTokens()) {
+            while (stringTokenizer.hasMoreTokens()) {
                 this.fieldList.add(stringTokenizer.nextToken());
             }
         }
@@ -93,7 +93,7 @@ public class QueryString implements Serializable {
         this.sortList = new ArrayList<>();
         if (sortParams != null) {
             StringTokenizer stringTokenizer = new StringTokenizer(sortParams, DELIMITER_PARAM_VALUE);
-            while(stringTokenizer.hasMoreTokens()) {
+            while (stringTokenizer.hasMoreTokens()) {
                 Field field = new Field();
                 String fieldParam = stringTokenizer.nextToken();
                 String order = null;
@@ -114,8 +114,8 @@ public class QueryString implements Serializable {
                 this.sortList.add(field);
             }
         }
-    }    
-    
+    }
+
     public List<Field> getFilterList() {
         return filterList;
     }
@@ -138,19 +138,19 @@ public class QueryString implements Serializable {
             }
         }
     }
-    
+
     private void defineFieldMethod(Field field) {
         this.defineFieldMethodWithEqualsBased(field);
         this.defineFieldMethodWithComparableBased(field);
         this.defineFieldMethodWithLikeBased(field);
         this.defineFieldMethodDefault(field);
     }
-    
+
     private void defineFieldMethodWithEqualsBased(Field field) {
         if (field.getName() != null) {
             String paramName = field.getName();
-            String operatorLeft = paramName.substring(paramName.length() -1);
-            switch(operatorLeft) {
+            String operatorLeft = paramName.substring(paramName.length() - 1);
+            switch (operatorLeft) {
                 case GREATER_OPERATOR:
                     field.setMethod(Method.GREATER_OR_EQUAL);
                     break;
@@ -164,11 +164,11 @@ public class QueryString implements Serializable {
                     break;
             }
             if (field.getMethod() != null) {
-                field.setName(paramName.substring(0, paramName.length() -1));
+                field.setName(paramName.substring(0, paramName.length() - 1));
             }
         }
     }
-    
+
     private void defineFieldMethodWithComparableBased(Field field) {
         if (field.getValue() == null || field.getValue().toString().isEmpty()) {
             String[] fieldArray = null;
@@ -191,7 +191,7 @@ public class QueryString implements Serializable {
             field.setField(new Field(field.getName(), fieldArray[1]));
         }
     }
-    
+
     private void defineFieldMethodWithLikeBased(Field field) {
         if (field.getValue() != null && field.getValue().toString().contains(LIKE_OPERATOR)) {
             if (field.getMethod() != null && field.getMethod().equals(Method.NOT_EQUAL)) {
@@ -201,7 +201,7 @@ public class QueryString implements Serializable {
             }
         }
     }
-    
+
     private void defineFieldMethodDefault(Field field) {
         if (field.getMethod() == null) {
             field.setMethod(Method.EQUAL);

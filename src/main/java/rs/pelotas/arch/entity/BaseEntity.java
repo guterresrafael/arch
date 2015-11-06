@@ -19,7 +19,7 @@ public abstract class BaseEntity<I> implements Serializable {
 
     @XmlElement(name = "action")
     @Transient
-    RESTServiceDiscovery rest;
+    private RESTServiceDiscovery rest;
 
     public abstract I getId();
 
