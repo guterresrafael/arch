@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.Marshaller;
-import rs.pelotas.arch.helper.Reflection;
+import arch.helper.Reflection;
 
 /**
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
